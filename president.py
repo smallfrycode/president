@@ -88,6 +88,9 @@ class Game:
                         self.last_played = response
                         player.hand = player.hand - cards_to_remove
                         valid_response = True
+                    elif response == "skip":
+                        valid_response = True
+                        print(f"{player.name} has skipped their turn.")
                     else:
                         print(f"Sorry {player.name}, that is not a valid play.")
                 # add player to out list and give them proper role

@@ -69,40 +69,69 @@ class HumanPlayer(Player):
             return "pass"
         
 class ComputerPlayer(Player):
+    """Represents a computer player in the card game.
+    
+    Automates choosing cards to play during the game.
+    
+    Attributes:
+        name (str): The player's name.
+        hand (list of Card): The player's current cards.
+    """
     def __init__(self, name, hand):
+        """Initializes the computer player with a name and starting hand.
+        
+        Args:
+            name (str): The player's name.
+            hand (list of Card): The starting cards.
+        """
         super().__init__(name, hand) 
     
     def take_turn(self, game_state):
-        """
-        Decides what card to play based on the last card on the table.
+        """Chooses cards to play based on the last cards played.
         
-        - game_state: Info about the last card played and whose turn it is.
+        Args:
+            game_state (GameState): The current state of the game.
         
         Returns:
-        - The chosen card if it can play one, or 'skip' if no valid move.
+            set: A set of cards to play, or 'skip' if no valid play.
+        
+        Effects:
+            - Updates the player's hand by removing played cards.
+            - Returns the selected card set or a skip action.
         """
         
         last_card = game_state.get_last_card_played() 
         
        
-        playable_cards = []
+        playable_sets = []
         
-        for card in self.hand:
-            if card > last_card:
-                playable_cards.append(card)
+        for i in range(len(self.hand)):
+            for j in range(i, len(self.hand)):
+                if i == j:
+                    card_set = {self.hand[i]}
+                else:
+                    card_set = {self.hand[i], self.hand[j]}
+                
+                valid = True
+                for card in card_set:
+                    if not card.is_valid_play(last_card_set):
+                        valid = False
+                        break
+                
+                if valid:
+                    playable_sets.append(card_set)
 
-        if playable_cards:
+        if playable_sets:
+            # Choose a simpler way to find the lowest value set
+            selected_set = min(playable_sets, key=lambda x: (min(card.value for card in x), len(x)))
+
+            # Remove chosen cards from the hand
+            for card in selected_set:
+                self.hand.remove(card)
             
-            playable_cards.sort()
-            selected_card = playable_cards[0]              
-         
-            self.hand.remove(selected_card)
-            print(f"{self.name} plays {selected_card}")
-            return selected_card
+            return selected_set
         else:
-            print(f"{self.name} skips their turn.")
             return "skip"
-
 
 class Game:
     """The game's main system.

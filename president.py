@@ -63,15 +63,31 @@ class ComputerPlayer(Player):
         
         Args:
             name (str): The player's name.
-            hand (list of Card): The starting cards.
+            hand (list of Card): The player's current cards.
         """
-        super().__init__(name, hand) 
-    
-    def take_turn(self, game_state):
+        super().__init__(name, hand)
+
+    def is_valid_play(self, card_set, last_played_set):
+        """Checks if a set of cards is valid based on the last played set.
+        
+        Args:
+            card_set (set): The set of cards the player wants to play.
+            last_played_set (set): The last set of cards that were played.
+        
+        Returns:
+            bool: True if the card_set is a valid play, False otherwise.
+        """
+        if not last_played_set:
+            return True  # If there is no previous play, any play is valid
+        
+        # Check if all cards in the card_set have higher values than the highest card in last_played_set
+        return all(card.value > max(c.value for c in last_played_set) for card in card_set)
+
+    def take_turn(self, last_played):
         """Chooses cards to play based on the last cards played.
         
         Args:
-            game_state (GameState): The current state of the game.
+            last_played (set): The last cards that were played in the game.
         
         Returns:
             set: A set of cards to play, or 'skip' if no valid play.
@@ -80,30 +96,27 @@ class ComputerPlayer(Player):
             - Updates the player's hand by removing played cards.
             - Returns the selected card set or a skip action.
         """
-        
-        last_card = game_state.get_last_card_played() 
-        
-       
+        last_play_size = len(last_played)
         playable_sets = []
-        
+
         for i in range(len(self.hand)):
             for j in range(i, len(self.hand)):
-                if i == j:
+                # Create single or paired card sets based on last play size
+                if last_play_size == 1:
                     card_set = {self.hand[i]}
-                else:
+                elif last_play_size == 2 and j > i:
                     card_set = {self.hand[i], self.hand[j]}
-                
-                valid = True
-                for card in card_set:
-                    if not card.is_valid_play(last_card_set):
-                        valid = False
-                        break
-                
-                if valid:
+                else:
+                    continue
+
+                # Check if the card set is valid
+                if self.is_valid_play(card_set, last_played):
                     playable_sets.append(card_set)
+
         if playable_sets:
-            # Choose a simpler way to find the lowest value set
-            selected_set = min(playable_sets, key=lambda x: (min(card.value for card in x), len(x)))
+            # Choose the set with the lowest card values
+            selected_set = min(playable_sets, key=lambda x: min(card.value for card in x))
+            
             # Remove chosen cards from the hand
             for card in selected_set:
                 self.hand.remove(card)
@@ -111,6 +124,7 @@ class ComputerPlayer(Player):
             return selected_set
         else:
             return "skip"
+
 class Game:
     """The game's main system.
     

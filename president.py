@@ -2,15 +2,20 @@ class GameState:
     """ Provide information on the current state of the game.
     
     Attributes:
-        last_play (list): List representing the last card or set of cards played in the pile. 
-        role (str): Role of the player whose turn it is. 
+        players (list): list of players 
     """
     
-    def __init__(self, last_play, role):
-        self.last_play = last_play
-        self.role = role 
+    def __init__(self, players):
+        self.players = players 
     
-    def compare(self, other):
-        """ Compares if the card or set being played is valid."""
+    def display_players(self):
+        print("Current Players")
+        for player in self.players:
+            print(f"- {player} ({player.role})")
+            
+    def display_table(self):
+        print(f"Table: {self.last_played}")
         
-        if len(self.last_play) == len(self.)
+    def display_hand(self):
+        print(f"Hand: {self.hand}")
+    

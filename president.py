@@ -3,7 +3,71 @@
 
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
 
+class HumanPlayer(Player):
+    """
+    Represents the human player in the card game.
 
+    Inherits from the Player class and allows for human interaction during each turn.
+    Prompts the user to play a valid card or skip their turn.
+    """
+    def __init__(self, name, hand):
+        """
+        Initializes a HumanPlayer instance.
+
+        Parameters:
+        - name (str): The name of the player.
+        - hand (list of int): A list representing the player's hand, where each item is a card value.
+        
+        The constructor calls the initializer of the parent Player class.
+        """
+        super().__init__(name, hand)
+    
+    def take_turn(self, game_state):
+        """
+        Prompts the human player to select a card to play or skip their turn.
+        
+        - game_state: Info about the last card played and whose turn it is.
+        
+        Returns:
+        - The chosen card or 'skip' if the player decides not to play.
+        """
+        
+        last_card = game_state.get_last_card_played()
+        
+        # Show the player's hand and the last card played
+        print(f"\n{self.name}'s turn. Last card played: {last_card}")
+        print(f"Your hand: {self.hand}")
+        
+        # Filter cards that can be played based on the last card
+        playable_cards = [card for card in self.hand if card > last_card]
+        
+        if playable_cards:
+            print(f"Playable cards: {playable_cards}")
+            
+            while True:
+                # Ask player for input
+                choice = input("Enter the card you want to play or type 'pass' to pass: ")
+                
+                if choice == "pass":
+                    print(f"{self.name} skips their turn.")
+                    return "pass"
+                
+                # Checks if the chosen card is valid
+                try:
+                    selected_card = int(choice)
+                    if selected_card in playable_cards:
+                        self.hand.remove(selected_card)
+                        print(f"{self.name} plays {selected_card}")
+                        return selected_card
+                    else:
+                        print("Invalid choice. Please select a playable card or 'pass'.")
+                except ValueError:
+                    print("Invalid input. Please enter a valid card or 'pass'.")
+        
+        else:
+            print(f"No playable cards. {self.name} skips their turn.")
+            return "pass"
+        
 class ComputerPlayer(Player):
     def __init__(self, name, hand):
         super().__init__(name, hand) 

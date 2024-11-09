@@ -74,14 +74,16 @@ class ComputerPlayer(Player):
         Args:
             card_set (set): The set of cards the player wants to play.
             last_played_set (set): The last set of cards that were played.
-        
+                    
         Returns:
             bool: True if the card_set is a valid play, False otherwise.
         """
         if not last_played_set:
             return True  # If there is no previous play, any play is valid
-        
-        # Check if all cards in the card_set have higher values than the highest card in last_played_set
+
+        if len(card_set) != len(last_played_set):
+            return False  # The number of cards must match
+
         return all(card.value > max(c.value for c in last_played_set) for card in card_set)
 
     def take_turn(self, last_played):
@@ -98,19 +100,16 @@ class ComputerPlayer(Player):
             - Returns the selected card set or a skip action.
         """
         last_play_size = len(last_played)
-        
-        def valid_num(card):
-            same_value_cards = {c for c in self.hand if c.value == card.value}
-            if len(same_value_cards) >= last_play_size:
-                return same_value_cards if last_play_size == 1 else set(list(same_value_cards)[:last_play_size])
-            return None
-        
-        playable_options = []
 
-        for card in self.hand:
-            valid_set = valid_num(card)
-            if valid_set and self.is_valid_play(valid_set, last_played):
-                playable_options.append(valid_set)
+        # Find all valid card sets
+        playable_options = [
+            {c for c in self.hand if c.value == card.value}
+            for card in self.hand
+            if len({c for c in self.hand if c.value == card.value}) >= last_play_size
+        ]
+
+        # Filter only valid plays
+        playable_options = [option for option in playable_options if self.is_valid_play(last_played, option)]
 
         if playable_options:
             # Choose the set with the lowest card values
@@ -123,6 +122,7 @@ class ComputerPlayer(Player):
             return selected_set
         else:
             return "skip"
+
 
 class Game:
     """The game's main system.

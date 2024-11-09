@@ -174,8 +174,7 @@ class Game:
                 while not valid_response:
                     # response must be a set of card objects
                     response = player.turn(self.state())
-                    valid_cards = {r for r in response if r.is_valid_play(self.last_played)}
-                    if len(valid_cards) == len(response):
+                    if list(response)[0].validate(last_played=self.last_played, play=response):
                         cards_to_remove = {(card.name, card.suit) for card in response}
                         self.last_played = response
                         player.hand = player.hand - cards_to_remove

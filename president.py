@@ -192,3 +192,33 @@ class Game:
             # remove players who are out
             self.players = [player for player in self.players if not player in self.out]
         print(self.state().table)
+
+def main():
+    """
+    Sets up and starts the card game President with human and computer players,
+    with a maximum of players (matching the number of available roles).
+    """
+    max_players = len(ROLES)
+    human_name = input("Enter your name: ")
+    players = []
+    
+    # Add the human player with name
+    human_player = HumanPlayer(name=human_name, hand=[])
+    players.append(human_player)
+    
+    num_computers = max_players - 1 
+    for i in range(num_computers):
+        comp_player = ComputerPlayer(name=f"Computer {i + 1}", hand=[])
+        players.append(comp_player)
+
+    # Initialize the game instance
+    game = Game()
+    game.players = players
+    game.roles_left = ROLES.copy()
+    
+    # Start the game
+    first_game = True
+    game.play(first_game)
+
+if __name__ == "__main__":
+    main()

@@ -1,19 +1,15 @@
 """A program which can play the card game President."""
-
-
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
-
 class HumanPlayer(Player):
     """
     Represents the human player in the card game.
-
     Inherits from the Player class and allows for human interaction during each turn.
     Prompts the user to play a valid card or skip their turn.
     """
+    
     def __init__(self, name, hand):
         """
         Initializes a HumanPlayer instance.
-
         Parameters:
         - name (str): The name of the player.
         - hand (list of int): A list representing the player's hand, where each item is a card value.
@@ -33,23 +29,14 @@ class HumanPlayer(Player):
         """
         
         last_card = game_state.get_last_card_played()
-        
-        # Show the player's hand and the last card played
-        print(f"\n{self.name}'s turn. Last card played: {last_card}")
-        print(f"Your hand: {self.hand}")
-        
-        # Filter cards that can be played based on the last card
         playable_cards = [card for card in self.hand if card > last_card]
         
         if playable_cards:
-            print(f"Playable cards: {playable_cards}")
-            
             while True:
                 # Ask player for input
                 choice = input("Enter the card you want to play or type 'pass' to pass: ")
                 
                 if choice == "pass":
-                    print(f"{self.name} skips their turn.")
                     return "pass"
                 
                 # Checks if the chosen card is valid
@@ -57,52 +44,85 @@ class HumanPlayer(Player):
                     selected_card = int(choice)
                     if selected_card in playable_cards:
                         self.hand.remove(selected_card)
-                        print(f"{self.name} plays {selected_card}")
                         return selected_card
-                    else:
-                        print("Invalid choice. Please select a playable card or 'pass'.")
                 except ValueError:
-                    print("Invalid input. Please enter a valid card or 'pass'.")
-        
-        else:
-            print(f"No playable cards. {self.name} skips their turn.")
-            return "pass"
+                    pass  # Ignore invalid input; the player will be prompted again
+        # Automatically skip if no playable cards
+        return "pass"
         
 class ComputerPlayer(Player):
-    def __init__(self, name, hand):
-        super().__init__(name, hand) 
+    """Represents a computer player in the card game.
     
-    def take_turn(self, game_state):
-        """
-        Decides what card to play based on the last card on the table.
+    Automates choosing cards to play during the game.
+    
+    Attributes:
+        name (str): The player's name.
+        hand (list of Card): The player's current cards.
+    """
+    def __init__(self, name, hand):
+        """Initializes the computer player with a name and starting hand.
         
-        - game_state: Info about the last card played and whose turn it is.
+        Args:
+            name (str): The player's name.
+            hand (list of Card): The player's current cards.
+        """
+        super().__init__(name, hand)
+
+    def is_valid_play(self, card_set, last_played_set):
+        """Checks if a set of cards is valid based on the last played set.
+        
+        Args:
+            card_set (set): The set of cards the player wants to play.
+            last_played_set (set): The last set of cards that were played.
         
         Returns:
-        - The chosen card if it can play one, or 'skip' if no valid move.
+            bool: True if the card_set is a valid play, False otherwise.
         """
+        if not last_played_set:
+            return True  # If there is no previous play, any play is valid
         
-        last_card = game_state.get_last_card_played() 
+        # Check if all cards in the card_set have higher values than the highest card in last_played_set
+        return all(card.value > max(c.value for c in last_played_set) for card in card_set)
+
+    def take_turn(self, last_played):
+        """Chooses cards to play based on the last cards played.
         
-       
-        playable_cards = []
+        Args:
+            last_played (set): The last cards that were played in the game.
         
+        Returns:
+            set: A set of cards to play, or 'skip' if no valid play.
+        
+        Effects:
+            - Updates the player's hand by removing played cards.
+            - Returns the selected card set or a skip action.
+        """
+        last_play_size = len(last_played)
+        
+        def valid_num(card):
+            card_count = self.hand.count(card)
+            if card_count >= last_play_size:
+                return {card} if last_play_size == 1 else set(self.hand[:last_play_size])
+            return None
+        
+        playable_options = []
+
         for card in self.hand:
-            if card > last_card:
-                playable_cards.append(card)
+            valid_set = valid_num(card)
+            if valid_set and self.is_valid_play(valid_set, last_played):
+                playable_options.append(valid_set)
 
-        if playable_cards:
+        if playable_options:
+            # Choose the set with the lowest card values
+            selected_set = min(playable_options, key=lambda x: min(card.value for card in x))
+
+            # Remove chosen cards from the hand
+            for card in selected_set:
+                self.hand.remove(card)
             
-            playable_cards.sort()
-            selected_card = playable_cards[0]              
-         
-            self.hand.remove(selected_card)
-            print(f"{self.name} plays {selected_card}")
-            return selected_card
+            return selected_set
         else:
-            print(f"{self.name} skips their turn.")
             return "skip"
-
 
 class Game:
     """The game's main system.
@@ -114,7 +134,15 @@ class Game:
         roles_left (list): a list of all the available roles which can be won during the game
         current_player (Player): the person who is currently playing as a Player object
         last_played (set): the last card(s) which were played as a set
-    """     
+    """
+    def __init__(self, players):
+        self.deck = []
+        self.players = players
+        self.roles_left = ROLES.copy()
+        self.out = []
+        self.current_player = None
+        self.last_played = None
+    
     def play(self, first_game):
         """Starts and progresses through the game.
         
@@ -171,3 +199,52 @@ class Game:
             # remove players who are out
             self.players = [player for player in self.players if not player in self.out]
         print(self.state().table)
+        
+class GameState:
+    """ Provide information on the current state of the game.
+    
+    Attributes:
+        players (list): list of players 
+    """
+    
+    def __init__(self, players):
+        self.players = players 
+    
+    def display_players(self):
+        print("Current Players")
+        for player in self.players:
+            print(f"- {player} ({player.role})")
+            
+    def display_table(self):
+        print(f"Table: {self.last_played}")
+        
+    def display_hand(self):
+        print(f"Hand: {self.hand}")
+
+def main():
+    """
+    Sets up and starts the card game President with human and computer players,
+    with a maximum of players (matching the number of available roles).
+    """
+    max_players = len(ROLES)
+    human_name = input("Enter your name: ")
+    players = []
+    
+    # Add the human player with name
+    human_player = HumanPlayer(name=human_name, hand=[])
+    players.append(human_player)
+    
+    num_computers = max_players - 1 
+    for i in range(num_computers):
+        comp_player = ComputerPlayer(name=f"Computer {i + 1}", hand=[])
+        players.append(comp_player)
+
+    # Initialize the game instance
+    game = Game(players)
+    
+    # Start the game
+    first_game = True
+    game.play(first_game)
+
+if __name__ == "__main__":
+    main()

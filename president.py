@@ -100,9 +100,9 @@ class ComputerPlayer(Player):
         last_play_size = len(last_played)
         
         def valid_num(card):
-            card_count = self.hand.count(card)
-            if card_count >= last_play_size:
-                return {card} if last_play_size == 1 else set(self.hand[:last_play_size])
+            same_value_cards = {c for c in self.hand if c.value == card.value}
+            if len(same_value_cards) >= last_play_size:
+                return same_value_cards if last_play_size == 1 else set(list(same_value_cards)[:last_play_size])
             return None
         
         playable_options = []

@@ -134,7 +134,15 @@ class Game:
         roles_left (list): a list of all the available roles which can be won during the game
         current_player (Player): the person who is currently playing as a Player object
         last_played (set): the last card(s) which were played as a set
-    """     
+    """
+    def __init__(self, players):
+        self.deck = []
+        self.players = players
+        self.roles_left = ROLES.copy()
+        self.out = []
+        self.current_player = None
+        self.last_played = None
+    
     def play(self, first_game):
         """Starts and progresses through the game.
         
@@ -211,9 +219,7 @@ def main():
         players.append(comp_player)
 
     # Initialize the game instance
-    game = Game()
-    game.players = players
-    game.roles_left = ROLES.copy()
+    game = Game(players)
     
     # Start the game
     first_game = True

@@ -1,12 +1,7 @@
 If you can see this, then the repository is working properly. --smallfrycode
 
 Add your change here:
-
     1. andy
-<<<<<<< HEAD
     2. Ireland
-=======
-    2. kaye
->>>>>>> be92148ed9316a4ae636553ef8ddb71a65d56c45
-    3. 
-    4. 
+    3. kaye 
+    4. DUCKWOO

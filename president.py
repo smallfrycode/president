@@ -145,7 +145,11 @@ class GameState:
         self.current_player = current_player
         
     def display_players(self):
-        """ Displays the players and their roles."""
+        """ Displays the players and their roles.
+        
+        Returns:
+            str: A string representing the players and their roles. 
+        """
         players_rep = "Current Players:\n"
         for player in self.players:
             players_rep += "- {player} ({player.role})\n"

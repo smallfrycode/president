@@ -97,26 +97,24 @@ class ComputerPlayer(Player):
             - Returns the selected card set or a skip action.
         """
         last_play_size = len(last_played)
-        playable_sets = []
+        
+        def valid_num(card):
+            card_count = self.hand.count(card)
+            if card_count >= last_play_size:
+                return {card} if last_play_size == 1 else set(self.hand[:last_play_size])
+            return None
+        
+        playable_options = []
 
-        for i in range(len(self.hand)):
-            for j in range(i, len(self.hand)):
-                # Create single or paired card sets based on last play size
-                if last_play_size == 1:
-                    card_set = {self.hand[i]}
-                elif last_play_size == 2 and j > i:
-                    card_set = {self.hand[i], self.hand[j]}
-                else:
-                    continue
+        for card in self.hand:
+            valid_set = valid_num(card)
+            if valid_set and self.is_valid_play(valid_set, last_played):
+                playable_options.append(valid_set)
 
-                # Check if the card set is valid
-                if self.is_valid_play(card_set, last_played):
-                    playable_sets.append(card_set)
-
-        if playable_sets:
+        if playable_options:
             # Choose the set with the lowest card values
-            selected_set = min(playable_sets, key=lambda x: min(card.value for card in x))
-            
+            selected_set = min(playable_options, key=lambda x: min(card.value for card in x))
+
             # Remove chosen cards from the hand
             for card in selected_set:
                 self.hand.remove(card)

@@ -6,6 +6,7 @@ class HumanPlayer(Player):
     Inherits from the Player class and allows for human interaction during each turn.
     Prompts the user to play a valid card or skip their turn.
     """
+    
     def __init__(self, name, hand):
         """
         Initializes a HumanPlayer instance.

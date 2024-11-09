@@ -68,24 +68,6 @@ class ComputerPlayer(Player):
         """
         super().__init__(name, hand)
 
-    def is_valid_play(self, card_set, last_played_set):
-        """Checks if a set of cards is valid based on the last played set.
-        
-        Args:
-            card_set (set): The set of cards the player wants to play.
-            last_played_set (set): The last set of cards that were played.
-                    
-        Returns:
-            bool: True if the card_set is a valid play, False otherwise.
-        """
-        if not last_played_set:
-            return True  # If there is no previous play, any play is valid
-
-        if len(card_set) != len(last_played_set):
-            return False  # The number of cards must match
-
-        return all(card.value > max(c.value for c in last_played_set) for card in card_set)
-
     def take_turn(self, last_played):
         """Chooses cards to play based on the last cards played.
         
@@ -101,15 +83,28 @@ class ComputerPlayer(Player):
         """
         last_play_size = len(last_played)
 
+        def valid_num(card):
+            """Finds a valid set of cards of the same rank to play, validated by the Card class.
+            
+            Args:
+                card (Card): The card to use for forming a set.
+            
+            Returns:
+                set or None: A valid set of cards if available, None otherwise.
+            """
+            group = {c for c in self.hand if c.value == card.value}
+
+            # Check if the group is large enough to match the last played set
+            if len(group) >= last_play_size:
+                if card.validate(last_played=last_played, play=group):
+                    return group if last_play_size == 1 else set(list(group)[:last_play_size])
+            
+            return None
+
         # Find all valid card sets
         playable_options = [
-            {c for c in self.hand if c.value == card.value}
-            for card in self.hand
-            if len({c for c in self.hand if c.value == card.value}) >= last_play_size
+            valid_set for card in self.hand if (valid_set := valid_num(card))
         ]
-
-        # Filter only valid plays
-        playable_options = [option for option in playable_options if self.is_valid_play(last_played, option)]
 
         if playable_options:
             # Choose the set with the lowest card values

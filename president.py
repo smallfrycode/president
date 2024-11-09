@@ -132,7 +132,7 @@ class GameState:
         current_player (Player): the person who is currently playing as a Player object
     """
     
-    def __init__(self, players, players_out, last_played, current_player):
+    def __init__(self, players, last_played, current_player):
         """ Initializes the GameState class.
         
         Attributes:
@@ -148,7 +148,7 @@ class GameState:
         """ Displays the players and their roles.
         
         Returns:
-            str: A string representing the players and their roles. 
+            str: A string representing the players names and their roles. 
         """
         players_rep = "Current Players:\n"
         for player in self.players:
@@ -156,7 +156,12 @@ class GameState:
         return players_rep
         
     def __str__(self):
-        """ Create a string representation of the game."""
+        """ Create a string representation of the game.
+        
+        Returns:
+            str: Formatted string representing the players, the last played 
+            card(s) and the current player's hand"
+        """
         def find_unicode(suit):
             symbol = "\u2660" if card.suit == "Spades" else "\u2665" if \
                 card.suit == "Hearts" else "\u2666" if card.suit == "Diamonds" \

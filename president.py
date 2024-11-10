@@ -88,21 +88,24 @@ class ComputerPlayer(Player):
             """Finds a valid set of cards of the same rank to play, validated by the Card class.
             
             Args:
-                card (Card): The card to use for forming a set.
+                card (int): The value of the card to use for forming a set.
             
             Returns:
                 set or None: A valid set of cards if available, None otherwise.
             """
-            group = {c for c in self.hand if c.value == card.value}
+            group = list({c for c in self.hand if c.value == card.value})[:last_play_size]
 
-            # Check if the group is large enough to match the last played set
-            if len(group) >= last_play_size:
-                if card.validate(last_played=last_played, play=group):
-                    return group if last_play_size == 1 else set(list(group)[:last_play_size])
+            # Check if the group is large enough and valid to match the last played set
+            if len(group) == last_play_size:
+                if Card.validate(last_played=last_played, play=set(group)):
+                    return set(group)
             
             return None
 
-        # Find all valid card sets
+        # Define a constant list of card values to iterate over
+        CARD_VALUES = sorted(set(c.value for c in self.hand))
+
+        # Find all valid card sets without creating duplicates
         playable_options = [
             valid_set for card in self.hand if (valid_set := valid_num(card))
         ]

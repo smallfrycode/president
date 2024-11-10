@@ -1,3 +1,4 @@
+import argparse
 """A program which can play the card game President."""
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
 class HumanPlayer(Player):
@@ -252,25 +253,42 @@ def main():
     Sets up and starts the card game President with human and computer players,
     with a maximum of players (matching the number of available roles).
     """
+    parser = argparse.ArgumentParser(description="Play President card game.")
+    parser.add_argument('--players', nargs='+', help='List of human player names', required=True)
+    parser.add_argument('--computers', type=int, help='Number of computer players', default=0)
+    args = parser.parse_args()
+
     max_players = len(ROLES)
-    human_name = input("Enter your name: ")
+    total_requested_players = len(args.players) + args.computers
+
+    # Adjust player count if exceeding maximum
+    if total_requested_players > max_players:
+        if args.computers > 0:
+            args.computers = max(0, args.computers - (total_requested_players - max_players))
+        if len(args.players) > max_players - args.computers:
+            args.players = args.players[:max_players - args.computers]
+
     players = []
-    
-    # Add the human player with name
-    human_player = HumanPlayer(name=human_name, hand=[])
-    players.append(human_player)
-    
-    num_computers = max_players - 1 
-    for i in range(num_computers):
-        comp_player = ComputerPlayer(name=f"Computer {i + 1}", hand=[])
-        players.append(comp_player)
+
+    # Add human players from command-line arguments
+    for name in args.players:
+        players.append(HumanPlayer(name=name, hand=set()))
+
+    # Add computer players
+    for i in range(args.computers):
+        players.append(ComputerPlayer(name=f"Computer {i + 1}", hand=set()))
 
     # Initialize the game instance
     game = Game(players)
     
     # Start the game
     first_game = True
-    game.play(first_game)
+    while True:
+        game.play(first_game)
+        first_game = False  # Only the first round is marked as `first_game`
+        play_again = input("Play another round? (yes/no): ").strip().lower()
+        if play_again != 'yes':
+            break
 
 if __name__ == "__main__":
     main()

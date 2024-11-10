@@ -235,7 +235,61 @@ class Game:
             # remove players who are out
             self.players = [player for player in self.players if not player in self.out]
         print(self.state().table)
+unique_ranks = {"ace": 14, "king": 13, "queen": 12, "jack": 11}
+valid_ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+valid_suits = ["hearts", "diamonds", "spades", "clubs"]
+
+class Cards:
+    """Represents a card with a rank and suit and provides methods to compare cards.
+    
+    Attributes: 
+        rank (str or int): The rank of the card (either a face card or a numeric value).
+        suit (str): The suit of the card.
+        rank_value (int): The numeric value associated with the card's rank.
+    """
+    def __init__(self, rank, suit):
+        """Initializes a card with a given rank and suit.
         
+        Raises:
+            ValueError: If the suit or rank is invalid.
+        """
+        if suit not in valid_suits:
+            raise ValueError("Invalid suit input")
+        if rank not in unique_ranks and rank not in valid_ranks:
+            raise ValueError("Invalid rank input")
+        
+        self.rank = rank
+        self.suit = suit
+        self.rank_value = unique_ranks.get(rank, rank)
+        
+    def __str__(self):
+        """Returns a string representation of the card's rank and suit."""
+        return f"{self.rank} of {self.suit}"
+    
+    def __lt__(self, other):   
+        """Defines less than for comparing card rank values."""
+        return self.rank_value < other.rank_value
+    
+    def __ge__(self, other):
+        """Defines greater than or equal to for comparing card rank values."""
+        return self.rank_value >= other.rank_value
+def valid_play(current_played, last_played, player):
+    """Validates a player's move in the card game. 
+    ***I wanted to include this function to illustrate how it will work in the final game***
+    
+    Args:
+        current_played (Cards): The card the player chose to play.
+        last_played (Cards): The last card that was played.
+        player (str): The player's name.
+    
+    Returns: 
+        str: A message about the outcome of the player's move.
+    """
+    if current_played < last_played:
+        return f"{player} tried to play {current_played}, but its value is too low!"
+    else:
+        return f"{player} placed {current_played}"
+    
 def main():
     """
     Sets up and starts the card game President with human and computer players,

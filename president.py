@@ -1,3 +1,4 @@
+import argparse
 """A program which can play the card game President."""
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
 class HumanPlayer(Player):
@@ -68,24 +69,6 @@ class ComputerPlayer(Player):
         """
         super().__init__(name, hand)
 
-    def is_valid_play(self, card_set, last_played_set):
-        """Checks if a set of cards is valid based on the last played set.
-        
-        Args:
-            card_set (set): The set of cards the player wants to play.
-            last_played_set (set): The last set of cards that were played.
-                    
-        Returns:
-            bool: True if the card_set is a valid play, False otherwise.
-        """
-        if not last_played_set:
-            return True  # If there is no previous play, any play is valid
-
-        if len(card_set) != len(last_played_set):
-            return False  # The number of cards must match
-
-        return all(card.value > max(c.value for c in last_played_set) for card in card_set)
-
     def take_turn(self, last_played):
         """Chooses cards to play based on the last cards played.
         
@@ -101,15 +84,28 @@ class ComputerPlayer(Player):
         """
         last_play_size = len(last_played)
 
+        def valid_num(card):
+            """Finds a valid set of cards of the same rank to play, validated by the Card class.
+            
+            Args:
+                card (Card): The card to use for forming a set.
+            
+            Returns:
+                set or None: A valid set of cards if available, None otherwise.
+            """
+            group = {c for c in self.hand if c.value == card.value}
+
+            # Check if the group is large enough to match the last played set
+            if len(group) >= last_play_size:
+                if card.validate(last_played=last_played, play=group):
+                    return group if last_play_size == 1 else set(list(group)[:last_play_size])
+            
+            return None
+
         # Find all valid card sets
         playable_options = [
-            {c for c in self.hand if c.value == card.value}
-            for card in self.hand
-            if len({c for c in self.hand if c.value == card.value}) >= last_play_size
+            valid_set for card in self.hand if (valid_set := valid_num(card))
         ]
-
-        # Filter only valid plays
-        playable_options = [option for option in playable_options if self.is_valid_play(last_played, option)]
 
         if playable_options:
             # Choose the set with the lowest card values
@@ -245,25 +241,42 @@ def main():
     Sets up and starts the card game President with human and computer players,
     with a maximum of players (matching the number of available roles).
     """
+    parser = argparse.ArgumentParser(description="Play President card game.")
+    parser.add_argument('--players', nargs='+', help='List of human player names', required=True)
+    parser.add_argument('--computers', type=int, help='Number of computer players', default=0)
+    args = parser.parse_args()
+
     max_players = len(ROLES)
-    human_name = input("Enter your name: ")
+    total_requested_players = len(args.players) + args.computers
+
+    # Adjust player count if exceeding maximum
+    if total_requested_players > max_players:
+        if args.computers > 0:
+            args.computers = max(0, args.computers - (total_requested_players - max_players))
+        if len(args.players) > max_players - args.computers:
+            args.players = args.players[:max_players - args.computers]
+
     players = []
-    
-    # Add the human player with name
-    human_player = HumanPlayer(name=human_name, hand=[])
-    players.append(human_player)
-    
-    num_computers = max_players - 1 
-    for i in range(num_computers):
-        comp_player = ComputerPlayer(name=f"Computer {i + 1}", hand=[])
-        players.append(comp_player)
+
+    # Add human players from command-line arguments
+    for name in args.players:
+        players.append(HumanPlayer(name=name, hand=set()))
+
+    # Add computer players
+    for i in range(args.computers):
+        players.append(ComputerPlayer(name=f"Computer {i + 1}", hand=set()))
 
     # Initialize the game instance
     game = Game(players)
     
     # Start the game
     first_game = True
-    game.play(first_game)
+    while True:
+        game.play(first_game)
+        first_game = False  # Only the first round is marked as `first_game`
+        play_again = input("Play another round? (yes/no): ").strip().lower()
+        if play_again != 'yes':
+            break
 
 if __name__ == "__main__":
     main()

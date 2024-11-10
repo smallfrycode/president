@@ -144,29 +144,17 @@ class GameState:
         self.last_played = last_played
         self.current_player = current_player
         
-    def display_players(self):
-        """ Displays the players and their roles.
-        
-        Returns:
-            str: A string representing the players names and their roles. 
-        """
-        players_rep = "Current Players:\n"
-        for player in self.players:
-            players_rep += "- {player} ({player.role})\n"
-        return players_rep
-        
     def __str__(self):
-        """ Create a string representation of the game.
-        
-        Returns:
-            str: Formatted string representing the players, the last played 
-            card(s) and the current player's hand"
-        """
         def find_unicode(suit):
+            """ Determines the unicode depending on the suit of the card."""
             symbol = "\u2660" if card.suit == "Spades" else "\u2665" if \
                 card.suit == "Hearts" else "\u2666" if card.suit == "Diamonds" \
                 else "\u2663"
         
+        players_rep = "Current Players:\n"
+        for player in self.players:
+            players_rep += f"- {player.name} ({player.role})\n"
+    
         table_rep = ""
         for card in self.last_played:
             table_rep += card.rank + find_unicode(card.suit)
@@ -175,7 +163,7 @@ class GameState:
         for card in self.current_player.hand:
             hand_rep += card.rank + find_unicode(card.suit)
             
-        return f"{self.display_players()} \nTable: {table_rep} \nYour Hand: {hand_rep}"
+        return f"{players_rep} \nTable: {table_rep} \nYour Hand: {hand_rep}"
     
 class Game:
     """The game's main system.

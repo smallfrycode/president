@@ -1,5 +1,5 @@
-import argparse
 """A program which can play the card game President."""
+import argparse
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
 class HumanPlayer(Player):
     """
@@ -101,21 +101,24 @@ class ComputerPlayer(Player):
             """Finds a valid set of cards of the same rank to play, validated by the Card class.
             
             Args:
-                card (Card): The card to use for forming a set.
+                card (int): The value of the card to use for forming a set.
             
             Returns:
                 set or None: A valid set of cards if available, None otherwise.
             """
-            group = {c for c in self.hand if c.value == card.value}
+            group = list({c for c in self.hand if c.value == card.value})[:last_play_size]
 
-            # Check if the group is large enough to match the last played set
-            if len(group) >= last_play_size:
-                if card.validate(last_played=last_played, play=group):
-                    return group if last_play_size == 1 else set(list(group)[:last_play_size])
+            # Check if the group is large enough and valid to match the last played set
+            if len(group) == last_play_size:
+                if Card.validate(last_played=last_played, play=set(group)):
+                    return set(group)
             
             return None
 
-        # Find all valid card sets
+        # Define a constant list of card values to iterate over
+        CARD_VALUES = sorted(set(c.value for c in self.hand))
+
+        # Find all valid card sets without creating duplicates
         playable_options = [
             valid_set for card in self.hand if (valid_set := valid_num(card))
         ]
@@ -153,29 +156,17 @@ class GameState:
         self.last_played = last_played
         self.current_player = current_player
         
-    def display_players(self):
-        """ Displays the players and their roles.
-        
-        Returns:
-            str: A string representing the players names and their roles. 
-        """
-        players_rep = "Current Players:\n"
-        for player in self.players:
-            players_rep += "- {player} ({player.role})\n"
-        return players_rep
-        
     def __str__(self):
-        """ Create a string representation of the game.
-        
-        Returns:
-            str: Formatted string representing the players, the last played 
-            card(s) and the current player's hand"
-        """
         def find_unicode(suit):
+            """ Determines the unicode depending on the suit of the card."""
             symbol = "\u2660" if card.suit == "Spades" else "\u2665" if \
                 card.suit == "Hearts" else "\u2666" if card.suit == "Diamonds" \
                 else "\u2663"
         
+        players_rep = "Current Players:\n"
+        for player in self.players:
+            players_rep += f"- {player.name} ({player.role})\n"
+    
         table_rep = ""
         for card in self.last_played:
             table_rep += card.rank + find_unicode(card.suit)
@@ -184,7 +175,7 @@ class GameState:
         for card in self.current_player.hand:
             hand_rep += card.rank + find_unicode(card.suit)
             
-        return f"{self.display_players()} \nTable: {table_rep} \nYour Hand: {hand_rep}"
+        return f"{players_rep} \nTable: {table_rep} \nYour Hand: {hand_rep}"
     
 class Game:
     """The game's main system.
@@ -260,7 +251,61 @@ class Game:
             # remove players who are out
             self.players = [player for player in self.players if not player in self.out]
         print(self.state().table)
+unique_ranks = {"ace": 14, "king": 13, "queen": 12, "jack": 11}
+valid_ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+valid_suits = ["hearts", "diamonds", "spades", "clubs"]
+
+class Cards:
+    """Represents a card with a rank and suit and provides methods to compare cards.
+    
+    Attributes: 
+        rank (str or int): The rank of the card (either a face card or a numeric value).
+        suit (str): The suit of the card.
+        rank_value (int): The numeric value associated with the card's rank.
+    """
+    def __init__(self, rank, suit):
+        """Initializes a card with a given rank and suit.
         
+        Raises:
+            ValueError: If the suit or rank is invalid.
+        """
+        if suit not in valid_suits:
+            raise ValueError("Invalid suit input")
+        if rank not in unique_ranks and rank not in valid_ranks:
+            raise ValueError("Invalid rank input")
+        
+        self.rank = rank
+        self.suit = suit
+        self.rank_value = unique_ranks.get(rank, rank)
+        
+    def __str__(self):
+        """Returns a string representation of the card's rank and suit."""
+        return f"{self.rank} of {self.suit}"
+    
+    def __lt__(self, other):   
+        """Defines less than for comparing card rank values."""
+        return self.rank_value < other.rank_value
+    
+    def __ge__(self, other):
+        """Defines greater than or equal to for comparing card rank values."""
+        return self.rank_value >= other.rank_value
+def valid_play(current_played, last_played, player):
+    """Validates a player's move in the card game. 
+    ***I wanted to include this function to illustrate how it will work in the final game***
+    
+    Args:
+        current_played (Cards): The card the player chose to play.
+        last_played (Cards): The last card that was played.
+        player (str): The player's name.
+    
+    Returns: 
+        str: A message about the outcome of the player's move.
+    """
+    if current_played < last_played:
+        return f"{player} tried to play {current_played}, but its value is too low!"
+    else:
+        return f"{player} placed {current_played}"
+    
 def main():
     """
     Sets up and starts the card game President with human and computer players,

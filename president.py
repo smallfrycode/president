@@ -7,8 +7,18 @@ valid_suits = ["hearts", "diamonds", "spades", "clubs"]
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
 
 class Cards:
-    """Represents a card with a rank and suit."""
+    """Represents a card with a rank and suit and provides methods to compare cards.
+    
+    Attributes: 
+        rank (str or int): The rank of the card (either a face card or a numeric value).
+        suit (str): The suit of the card.
+    """
     def __init__(self, rank, suit):
+        """Initializes a card with a given rank and suit.
+        
+        Raises:
+            ValueError: If the suit or rank is invalid.
+        """
         if suit not in valid_suits:
             raise ValueError("Invalid suit input")
         if rank not in unique_ranks and rank not in valid_ranks:
@@ -28,6 +38,17 @@ class Cards:
         return self.rank_value >= other.rank_value
 
 def valid_play(current_played, last_played, player):
+    """Validates a player's move in the card game. 
+    ***I wanted to include this function to illustrate how it will work in the final game***
+    
+    Args:
+        current_played (Cards): The card the player chose to play.
+        last_played (Cards): The last card that was played.
+        player (str): The player's name.
+    
+    Returns: 
+        str: A message about the outcome of the player's move.
+    """
     if len(current_played) != len(last_played):
         return f"{player}, you must play {len(last_played)} card(s) to match the previous play"
     

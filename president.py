@@ -124,14 +124,14 @@ class GameState:
     
     Attributes: 
         players (list): a collection of all the players as a list
-        last_played (set): the last card(s) which were played as a set
-        current_player (Player): the person who is currently playing as a Player object
+        last_played (set): the last card(s) that were played.
+        current_player (Player): the person who is currently playing as a Player object.
     """
     
     def __init__(self, players, last_played, current_player):
         """ Initializes the GameState class.
         
-        Attributes:
+        Args:
             players (list): a collection of all the players as a list
             last_played (set): the last card(s) which were played as a set
             current_player (Player): the person who is currently playing as a Player object
@@ -143,9 +143,10 @@ class GameState:
     def __str__(self):
         def find_unicode(suit):
             """ Determines the unicode depending on the suit of the card."""
-            symbol = "\u2660" if card.suit == "Spades" else "\u2665" if \
-                card.suit == "Hearts" else "\u2666" if card.suit == "Diamonds" \
+            symbol = "\u2660" if suit == "Spades" else "\u2665" if \
+                suit == "Hearts" else "\u2666" if suit == "Diamonds" \
                 else "\u2663"
+            return symbol
         
         players_rep = "Current Players:\n"
         for player in self.players:

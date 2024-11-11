@@ -139,18 +139,18 @@ class GameState:
     """ Provide information on the current state of the game.
     
     Attributes: 
-        players (list): a collection of all the players as a list
-        last_played (set): the last card(s) that were played.
-        current_player (Player): the person who is currently playing as a Player object.
+        players (list): A collection of all the players as a list
+        last_played (set): The last card(s) that were played.
+        current_player (Player): The person who is currently playing as a Player object.
     """
     
     def __init__(self, players, last_played, current_player):
         """ Initializes the GameState class.
         
         Args:
-            players (list): a collection of all the players as a list
-            last_played (set): the last card(s) which were played as a set
-            current_player (Player): the person who is currently playing as a Player object
+            players (list): A collection of all the players as a list.
+            last_played (set): The last card(s) which were played as a set.
+            current_player (Player): The person who is currently playing as a Player object.
         """
         self.players = players
         self.last_played = last_played
@@ -158,20 +158,30 @@ class GameState:
         
     def __str__(self):
         def find_unicode(suit):
-            """ Determines the unicode depending on the suit of the card."""
+            """ Determines the unicode depending on the suit of the card.
+            
+            Args:
+                suit (str): The suit of the card.
+            
+            Returns:
+                str: Unicode representation of the suit of the card. 
+            """
             symbol = "\u2660" if suit == "Spades" else "\u2665" if \
                 suit == "Hearts" else "\u2666" if suit == "Diamonds" \
                 else "\u2663"
             return symbol
         
+        # create a string representing the players of the game and their roles
         players_rep = "Current Players:\n"
         for player in self.players:
             players_rep += f"- {player.name} ({player.role})\n"
-    
+
+        # create string representing the last card(s) played on the table
         table_rep = ""
         for card in self.last_played:
             table_rep += card.rank + find_unicode(card.suit)
-            
+        
+        # create a string representing the hand of the current player 
         hand_rep = ""
         for card in self.current_player.hand:
             hand_rep += card.rank + find_unicode(card.suit)

@@ -1,6 +1,51 @@
 """A program which can play the card game President."""
 import argparse
+
+unique_ranks = {"ace": 14, "king": 13, "queen": 12, "jack": 11}
+valid_ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+valid_suits = ["hearts", "diamonds", "spades", "clubs"]
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
+
+class Cards:
+    """Represents a card with a rank and suit."""
+    def __init__(self, rank, suit):
+        if suit not in valid_suits:
+            raise ValueError("Invalid suit input")
+        if rank not in unique_ranks and rank not in valid_ranks:
+            raise ValueError("Invalid rank input")
+        
+        self.rank = rank
+        self.suit = suit
+        self.rank_value = unique_ranks.get(rank, rank)
+        
+    def __str__(self):
+        return f"{self.rank} of {self.suit}"
+    
+    def __lt__(self, other):   
+        return self.rank_value < other.rank_value
+    
+    def __ge__(self, other):
+        return self.rank_value >= other.rank_value
+
+def valid_play(current_played, last_played, player):
+    if len(current_played) != len(last_played):
+        return f"{player}, you must play {len(last_played)} card(s) to match the previous play"
+    
+    current_suit = list(current_played)[0].suit
+    if not all(card.suit == current_suit for card in current_played):
+        return f"{player}, all cards must be of the same suit"
+    if not all(card.rank_value > max(card.rank_value for card in last_played) for card in current_played):
+        return f"{player}, your cards are not all greater than the last played cards"
+    if len(current_played) > 4:
+        return f"{player}, you cannot place more than 4 cards of a kind!"
+    
+    count = len(current_played)
+    rank = list(current_played)[0].rank
+    suit = list(current_played)[0].suit
+    card_text = f"{count} {rank} of {suit}" if count > 1 else f"an {rank} of {suit}"
+    
+    return f"{player} played {card_text}"
+
 class HumanPlayer(Player):
     """
     Represents the human player in the card game.
@@ -262,61 +307,7 @@ class Game:
             # remove players who are out
             self.players = [player for player in self.players if not player in self.out]
         print(self.state().table)
-unique_ranks = {"ace": 14, "king": 13, "queen": 12, "jack": 11}
-valid_ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-valid_suits = ["hearts", "diamonds", "spades", "clubs"]
 
-class Cards:
-    """Represents a card with a rank and suit and provides methods to compare cards.
-    
-    Attributes: 
-        rank (str or int): The rank of the card (either a face card or a numeric value).
-        suit (str): The suit of the card.
-        rank_value (int): The numeric value associated with the card's rank.
-    """
-    def __init__(self, rank, suit):
-        """Initializes a card with a given rank and suit.
-        
-        Raises:
-            ValueError: If the suit or rank is invalid.
-        """
-        if suit not in valid_suits:
-            raise ValueError("Invalid suit input")
-        if rank not in unique_ranks and rank not in valid_ranks:
-            raise ValueError("Invalid rank input")
-        
-        self.rank = rank
-        self.suit = suit
-        self.rank_value = unique_ranks.get(rank, rank)
-        
-    def __str__(self):
-        """Returns a string representation of the card's rank and suit."""
-        return f"{self.rank} of {self.suit}"
-    
-    def __lt__(self, other):   
-        """Defines less than for comparing card rank values."""
-        return self.rank_value < other.rank_value
-    
-    def __ge__(self, other):
-        """Defines greater than or equal to for comparing card rank values."""
-        return self.rank_value >= other.rank_value
-def valid_play(current_played, last_played, player):
-    """Validates a player's move in the card game. 
-    ***I wanted to include this function to illustrate how it will work in the final game***
-    
-    Args:
-        current_played (Cards): The card the player chose to play.
-        last_played (Cards): The last card that was played.
-        player (str): The player's name.
-    
-    Returns: 
-        str: A message about the outcome of the player's move.
-    """
-    if current_played < last_played:
-        return f"{player} tried to play {current_played}, but its value is too low!"
-    else:
-        return f"{player} placed {current_played}"
-    
 def main():
     """
     Sets up and starts the card game President with human and computer players,
@@ -325,6 +316,10 @@ def main():
     parser = argparse.ArgumentParser(description="Play President card game.")
     parser.add_argument('--players', nargs='+', help='List of human player names', required=True)
     parser.add_argument('--computers', type=int, help='Number of computer players', default=0)
+    parser.add_argument("-p", "--player", type=str, required=True, help="The player's name")
+    parser.add_argument("-r", "--rank", type=str, required=True, help="The rank of the card(s) (e.g., ace, king)")
+    parser.add_argument("-s", "--suit", type=str, required=True, help="The suit of the card(s) (e.g., hearts)")
+    parser.add_argument("-n", "--number", type=int, default=1, help="Number of cards being played")
     args = parser.parse_args()
 
     max_players = len(ROLES)
@@ -360,4 +355,7 @@ def main():
             break
 
 if __name__ == "__main__":
-    main()
+    args = parser(sys.argv[1:])
+    current_played = {Cards(args.rank, args.suit) for _ in range(args.number)}
+    last_played = {Cards("king", args.suit) for _ in range(args.number)}
+    print(valid_play(current_played, last_played, args.player))

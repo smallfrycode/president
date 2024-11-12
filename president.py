@@ -55,8 +55,8 @@ class Cards:
             if len(current_played) != len(last_played):
                 return False
 
-        current_suit = current_played[0].suit
-        if not all(card.suit == current_suit for card in current_played):
+        first_rank = current_played[0].rank
+        if not all(card.rank == first_rank for card in current_played):
             return False
 
         if last_played is not None and not all(card.rank_value > max(card.rank_value for card in last_played) for card in current_played):

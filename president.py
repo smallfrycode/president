@@ -1,9 +1,9 @@
 """A program which can play the card game President."""
 import argparse
 
-unique_ranks = {"ace": 14, "king": 13, "queen": 12, "jack": 11}
-valid_ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-valid_suits = ["hearts", "diamonds", "spades", "clubs"]
+U_R = {"ace": 14, "king": 13, "queen": 12, "jack": 11}
+RANKS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+SUITS = ["hearts", "diamonds", "spades", "clubs"]
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
 
 class Cards:
@@ -19,53 +19,50 @@ class Cards:
         Raises:
             ValueError: If the suit or rank is invalid.
         """
-        if suit not in valid_suits:
+        if suit not in SUITS:
             raise ValueError("Invalid suit input")
-        if rank not in unique_ranks and rank not in valid_ranks:
+        if rank not in U_R and rank not in RANKS:
             raise ValueError("Invalid rank input")
-        
+
         self.rank = rank
         self.suit = suit
-        self.rank_value = unique_ranks.get(rank, rank)
-        
+        self.rank_value = U_R.get(rank, rank)
+
     def __str__(self):
         return f"{self.rank} of {self.suit}"
-    
-    def __lt__(self, other):   
+
+    def __lt__(self, other):
         return self.rank_value < other.rank_value
-    
+
     def __ge__(self, other):
         return self.rank_value >= other.rank_value
 
-def valid_play(current_played, last_played, player):
-    """Validates a player's move in the card game. 
-    ***I wanted to include this function to illustrate how it will work in the final game***
-    
-    Args:
-        current_played (Cards): The card the player chose to play.
-        last_played (Cards): The last card that was played.
-        player (str): The player's name.
-    
-    Returns: 
-        str: A message about the outcome of the player's move.
-    """
-    if len(current_played) != len(last_played):
-        return f"{player}, you must play {len(last_played)} card(s) to match the previous play"
-    
-    current_suit = list(current_played)[0].suit
-    if not all(card.suit == current_suit for card in current_played):
-        return f"{player}, all cards must be of the same suit"
-    if not all(card.rank_value > max(card.rank_value for card in last_played) for card in current_played):
-        return f"{player}, your cards are not all greater than the last played cards"
-    if len(current_played) > 4:
-        return f"{player}, you cannot place more than 4 cards of a kind!"
-    
-    count = len(current_played)
-    rank = list(current_played)[0].rank
-    suit = list(current_played)[0].suit
-    card_text = f"{count} {rank} of {suit}" if count > 1 else f"an {rank} of {suit}"
-    
-    return f"{player} played {card_text}"
+    def valid_play(self, current_played, last_played, player):
+        """Validates a player's move in the card game.
+        
+        Args:
+            current_played (list of Cards): The cards the player chose to play.
+            last_played (list of Cards or None): The last cards that were played (None if it's the first play).
+            player (str): The player's name.
+        
+        Returns: 
+            bool: True if the move is valid, False if the move is invalid.
+        """
+        if last_played is None:
+            if len(current_played) < 4:
+                return True
+        else:
+            if len(current_played) != len(last_played):
+                return False
+
+        current_suit = current_played[0].suit
+        if not all(card.suit == current_suit for card in current_played):
+            return False
+
+        if last_played is not None and not all(card.rank_value > max(card.rank_value for card in last_played) for card in current_played):
+            return False
+
+        return True
 
 class HumanPlayer(Player):
     """
@@ -374,7 +371,3 @@ def main():
             break
 
 if __name__ == "__main__":
-    args = parser(sys.argv[1:])
-    current_played = {Cards(args.rank, args.suit) for _ in range(args.number)}
-    last_played = {Cards("king", args.suit) for _ in range(args.number)}
-    print(valid_play(current_played, last_played, args.player))

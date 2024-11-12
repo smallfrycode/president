@@ -167,22 +167,18 @@ class ComputerPlayer(Player):
             """Finds a valid set of cards of the same rank to play, validated by the Card class.
             
             Args:
-                card (int): The value of the card to use for forming a set.
+                card (Card): The card to use for forming a set.
             
             Returns:
                 set or None: A valid set of cards if available, None otherwise.
             """
-            group = list({c for c in self.hand if c.value == card.value})[:last_play_size]
-
+            group = [c for c in self.hand if c.rank_value == card.rank_value]
             # Check if the group is large enough and valid to match the last played set
-            if len(group) == last_play_size:
-                if Card.validate(last_played=last_played, play=set(group)):
-                    return set(group)
-            
+            if len(group) >= last_play_size:
+                play_set = set(group[:last_play_size])
+                if card.validate(last_played=last_played, play=play_set):
+                    return play_set
             return None
-
-        # Define a constant list of card values to iterate over
-        CARD_VALUES = sorted(set(c.value for c in self.hand))
 
         # Find all valid card sets without creating duplicates
         playable_options = [
@@ -190,8 +186,8 @@ class ComputerPlayer(Player):
         ]
 
         if playable_options:
-            # Choose the set with the lowest card values
-            selected_set = min(playable_options, key=lambda x: min(card.value for card in x))
+            # Choose the set with the lowest card values based on CARD_VALUES
+            selected_set = min(playable_options, key=lambda x: min(CARD_VALUES.index(card.rank) for card in x))
 
             # Remove chosen cards from the hand
             for card in selected_set:
@@ -200,6 +196,8 @@ class ComputerPlayer(Player):
             return selected_set
         else:
             return "skip"
+
+CARD_VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
 
 class GameState:
     """ Provide information on the current state of the game.

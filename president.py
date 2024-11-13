@@ -259,6 +259,11 @@ class Game:
         last_played (set): the last card(s) which were played as a set
     """
     def __init__(self, players):
+        """Initializes the game.
+        
+        Args:
+            players (list): a list of all player objects
+        """
         self.deck = []
         self.players = players
         self.roles_left = ROLES.copy()
@@ -369,3 +374,4 @@ def main():
             break
 
 if __name__ == "__main__":
+    main()

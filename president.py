@@ -25,18 +25,17 @@ class Cards:
         if rank not in U_R and rank not in RANKS:
             raise ValueError("Invalid rank input")
 
-        self.rank = rank
+        self.rank = U_R.get(rank, rank)
         self.suit = suit
-        self.rank_value = U_R.get(rank, rank)
 
     def __str__(self):
         return f"{self.rank} of {self.suit}"
 
     def __lt__(self, other):
-        return self.rank_value < other.rank_value
+        return self.rank < other.rank
 
     def __ge__(self, other):
-        return self.rank_value >= other.rank_value
+        return self.rank >= other.rank
 
     def valid_play(self, current_played, last_played, player):
         """Validates a player's move in the card game.
@@ -60,7 +59,7 @@ class Cards:
         if not all(card.rank == first_rank for card in current_played):
             return False
 
-        if last_played is not None and not all(card.rank_value > max(card.rank_value for card in last_played) for card in current_played):
+        if last_played is not None and not all(card.rank > max(card.rank for card in last_played) for card in current_played):
             return False
 
         return True

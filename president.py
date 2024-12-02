@@ -63,6 +63,14 @@ class Cards:
             return False
 
         return True
+    
+class Player:
+    def __init__(self, name, hand):
+        self.name = name
+        self.hand = hand
+        
+    def take_turn(self, game_state):
+        return NotImplementedError
 
 class HumanPlayer(Player):
     """

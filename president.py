@@ -65,11 +65,19 @@ class Cards:
         return True
     
 class Player:
+    """
+    Represents the player.
+    
+    Attributes:
+        name (str): name of the player
+        hand (list): player's cards
+    """
     def __init__(self, name, hand):
         self.name = name
         self.hand = hand
         
     def take_turn(self, game_state):
+        """Returns a NotImplementedError because computer/player hasn't been established yet."""
         return NotImplementedError
 
 class HumanPlayer(Player):

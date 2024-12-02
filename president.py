@@ -1,13 +1,18 @@
 """A program which can play the card game President."""
-import argparse
+
+import sys
+from argparse import ArgumentParser
+from random import choice
+
 
 U_R = {"ace": 14, "king": 13, "queen": 12, "jack": 11}
 RANKS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-SUITS = ["hearts", "diamonds", "spades", "clubs"]
+SUITS = ["Hearts", "Diamonds", "Spades", "Clubs"]
 ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
 CARD_VALUES = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
 
-class Cards:
+
+class Card:
     """Represents a card with a rank and suit and provides methods to compare cards.
     
     Attributes: 
@@ -76,7 +81,7 @@ class Player:
         self.name = name
         self.hand = hand
         
-    def take_turn(self, game_state):
+    def take_turn(self):
         """Returns a NotImplementedError because computer/player hasn't been established yet."""
         return NotImplementedError
 
@@ -280,12 +285,76 @@ class Game:
         Args:
             players (list): a list of all player objects
         """
-        self.deck = []
         self.players = players
         self.roles_left = ROLES.copy()
         self.out = []
         self.current_player = None
         self.last_played = None
+        
+        self.deck = []
+        for value in CARD_VALUES:
+            for suit in SUITS:
+                self.deck.append(Card(value, suit))
+        
+    def shuffle(self):
+        """Shuffles all the cards in the deck.
+        
+        Side effects:
+            Changes the deck attribute of Game
+        """
+        shuffled_deck = []
+        while self.deck:
+            chosen_card = choice(self.deck)
+            shuffled_deck.append(chosen_card)
+            self.deck.remove(chosen_card)
+        self.deck = shuffled_deck
+        
+    def deal(self):
+        """Deals all the cards from deck to players.
+        
+        Side effects:
+            - Changes the deck attribute of Game
+            - Changes hand attributes of players
+        """
+        max_index = len(self.players) - 1
+        while self.deck:
+            index = 1
+            player = self.players[index]
+            index = index + 1 if index <= max_index else 0
+            player.hand.append(self.deck.pop())
+            
+    def create_roles(self):
+        """Creates the possible roles players can win.
+        
+        Side effects:
+            Changes roles_left attribute of Game
+        """
+        player_count = len(self.players)
+        self.roles_left = {
+            2: ["President", "Trash"],
+            3: ["President", "Neutral", "Trash"],
+            4: ["President", "Vice President", "Vice Trash", "Trash"],
+            5: ROLES.copy()
+        }[player_count]
+        
+    def last_card_bomb(last_play):
+        """Checks to see if a player last played a bomb card.
+        
+        Returns:
+            A boolean value
+        """
+        for card in last_play:
+            if card.rank == "2" or card.rank == "8":
+                return True
+        return False
+    
+    def state(self):
+        """Grabs the state of the game.
+        
+        Returns:
+            a GameState object
+        """
+        return GameState(self.players, self.last_played, self.current_player)
     
     def play(self, first_game):
         """Starts and progresses through the game.
@@ -315,11 +384,12 @@ class Game:
                 self.current_player = player
                 # continue until valid response
                 valid_response = False
+                response = None
                 while not valid_response:
                     # response must be a set of card objects
                     response = player.turn(self.state())
                     if list(response)[0].validate(last_played=self.last_played, play=response):
-                        cards_to_remove = {(card.name, card.suit) for card in response}
+                        cards_to_remove = {(card.rank, card.suit) for card in response}
                         self.last_played = response
                         player.hand = player.hand - cards_to_remove
                         valid_response = True
@@ -330,7 +400,7 @@ class Game:
                         print(f"Sorry {player.name}, that is not a valid play.")
                 # add player to out list and give them proper role
                 if not player.hand:
-                    if self.last_card_bomb(player.last_play):
+                    if self.last_card_bomb(response):
                         player.role = self.roles_left.pop()
                     else:
                         player.role = self.roles_left.pop(0)
@@ -343,42 +413,34 @@ class Game:
             self.players = [player for player in self.players if not player in self.out]
         print(self.state().table)
 
-def main():
+def main(players, computers):
     """
     Sets up and starts the card game President with human and computer players,
     with a maximum of players (matching the number of available roles).
     """
-    parser = argparse.ArgumentParser(description="Play President card game.")
-    parser.add_argument('--players', nargs='+', help='List of human player names', required=True)
-    parser.add_argument('--computers', type=int, help='Number of computer players', default=0)
-    parser.add_argument("-p", "--player", type=str, required=True, help="The player's name")
-    parser.add_argument("-r", "--rank", type=str, required=True, help="The rank of the card(s) (e.g., ace, king)")
-    parser.add_argument("-s", "--suit", type=str, required=True, help="The suit of the card(s) (e.g., hearts)")
-    parser.add_argument("-n", "--number", type=int, default=1, help="Number of cards being played")
-    args = parser.parse_args()
-
+    
     max_players = len(ROLES)
-    total_requested_players = len(args.players) + args.computers
+    total_requested_players = len(players) + computers
 
     # Adjust player count if exceeding maximum
     if total_requested_players > max_players:
-        if args.computers > 0:
-            args.computers = max(0, args.computers - (total_requested_players - max_players))
-        if len(args.players) > max_players - args.computers:
-            args.players = args.players[:max_players - args.computers]
+        if computers > 0:
+            computers = max(0, computers - (total_requested_players - max_players))
+        if len(players) > max_players - computers:
+            players = players[:max_players - computers]
 
-    players = []
+    total_players = []
 
     # Add human players from command-line arguments
-    for name in args.players:
-        players.append(HumanPlayer(name=name, hand=set()))
+    for name in players:
+        total_players.append(HumanPlayer(name=name, hand=[]))
 
     # Add computer players
-    for i in range(args.computers):
-        players.append(ComputerPlayer(name=f"Computer {i + 1}", hand=set()))
+    for i in range(computers):
+        total_players.append(ComputerPlayer(name=f"Computer {i + 1}", hand=[]))
 
     # Initialize the game instance
-    game = Game(players)
+    game = Game(total_players)
     
     # Start the game
     first_game = True
@@ -388,6 +450,13 @@ def main():
         play_again = input("Play another round? (yes/no): ").strip().lower()
         if play_again != 'yes':
             break
+        
+def parse_args(arglist):
+    parser = ArgumentParser(description="President card game.")
+    parser.add_argument('--players', nargs='+', help='List of human player names', required=True)
+    parser.add_argument('--computers', type=int, help='Number of computer players', default=0)
+    return parser.parse_args()
 
 if __name__ == "__main__":
-    main()
+    args = parse_args(sys.argv[:1])
+    main(args.players, args.computers)

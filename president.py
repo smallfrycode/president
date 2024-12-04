@@ -62,7 +62,7 @@ class Card:
             first_rank = play[0].rank
             if not all(card.rank == first_rank for card in play):
                 return False
-            if not all(card <= last_played[0] for card in play):
+            if not all(card > last_played[0] for card in play):
                 return False
 
         return True
@@ -131,19 +131,10 @@ class HumanPlayer(Player):
                 if choice.strip().lower() == "pass":
                     return None
                 
-                # try:
                 selected_ranks = list(map(str, choice.split()))
                 selected_cards = [card for card in self.hand if card.rank in selected_ranks]
-                    
-                    # # Check if the chosen set matches any playable set
-                    # if selected_cards in playable_sets and len(selected_cards) == last_play_size:
-                    #     for card in selected_cards:
-                    #         self.hand.remove(card)
+                
                 return selected_cards
-                    # else:
-                    #     print("Invalid selection. Ensure your set matches the size and rank requirements.")
-                # except ValueError:
-                #     print("Invalid input. Please enter numeric card ranks separated by spaces.")
         # Automatically skip if no playable sets
         return None
         
@@ -264,8 +255,10 @@ class GameState:
         hand_rep = ""
         for card in self.current_player.hand:
             hand_rep += card.rank + find_unicode(card.suit)
+            if card != self.current_player.hand[-1]:
+                    hand_rep += ", "
             
-        return f"\n{players_rep} \nTable: {table_rep} \nYour Hand: {hand_rep}"
+        return f"\n{players_rep} \nTable: {table_rep} \n{self.current_player.name}'s Hand: {hand_rep}"
     
     def results(self):
         roles = ""
@@ -325,7 +318,6 @@ class Game:
         index = 1
         while self.deck:
             player = self.players[index]
-            print(player.name)
             index = index + 1 if index < max_index else 0
             player.hand.append(self.deck.pop())
             

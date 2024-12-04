@@ -42,6 +42,9 @@ class Card:
 
     def __ge__(self, other):
         return CARD_VALUES.index(self.rank) >= CARD_VALUES.index(other.rank)
+    
+    def __eq__(self, other):
+        return self.rank == other.rank and self.suit == other.suit
 
     def validate(self, play, last_played):
         """Validates a player's move in the card game.
@@ -115,26 +118,26 @@ class HumanPlayer(Player):
         last_played = state.last_played
         last_play_size = len(last_played) if last_played else 1  # Minimum set size
         
-        # Find sets of playable cards of the same rank larger than or equal to the last played set
-        playable_sets = [
-            {card for card in self.hand if card.rank == value} 
-            for value in set(card.rank for card in self.hand)
-            if len([card for card in self.hand if card.rank == value]) >= last_play_size and 
-               (not last_played or max([CARD_VALUES.index(card.rank) for card in self.hand if card.rank == value]) > max(CARD_VALUES.index(card.rank) for card in last_played))
-        ]
+        # Ask player for input
+        choice = input("Enter the card values you want to play followed by first letter of suit (e.g., 'JH, JD, JS') or type 'pass' to pass: ").strip().upper()
         
-        if playable_sets:
-            while True:
-                # Ask player for input
-                choice = input("Enter the ranks of cards you want to play (e.g., '3 3 3') or type 'pass' to pass: ")
-                
-                if choice.strip().lower() == "pass":
-                    return None
-                
-                selected_ranks = list(map(str, choice.split()))
-                selected_cards = [card for card in self.hand if card.rank in selected_ranks]
-                
-                return selected_cards
+        if choice == "PASS":
+            return None
+        
+        def convert(letter):
+            for suit in SUITS:
+                if suit[0] == letter:
+                    return suit
+            raise IndexError
+        
+        selected = [Card(card[0], convert(card[-1])) for card in choice.split(", ")]
+        valid_cards = 0
+        for card in selected:
+            for hand_card in self.hand:
+                if card == hand_card:
+                    valid_cards += 1
+        if valid_cards == len(selected):
+            return selected
         # Automatically skip if no playable sets
         return None
         
@@ -335,7 +338,7 @@ class Game:
             5: ROLES.copy()
         }[player_count]
         
-    def last_card_bomb(last_play):
+    def last_card_bomb(self, last_play):
         """Checks to see if a player last played a bomb card.
         
         Returns:
@@ -376,6 +379,7 @@ class Game:
             self.players = sorted(self.players, key=lambda player: ROLES.index(player.role))
             
         # begin actual game
+        skip_count = 0
         while len(self.players) > 1:
             # start the game
             for player in self.players:
@@ -386,13 +390,20 @@ class Game:
                 while not valid_response:
                     # response must be a set of card objects
                     response = player.turn(self.state())
+                    print(skip_count)
                     if response is None:
                         valid_response = True
+                        skip_count += 1
                         print(f"{player.name} has skipped their turn.")
+                    elif response[0].rank == CARD_VALUES[-1] or skip_count >= len(self.players):
+                        valid_response = True
+                        skip_count = 0
+                        self.last_played = None
                     elif response[0].validate(last_played=self.last_played, play=response):
                         self.last_played = response
                         for card in response:
                             player.hand.remove(card)
+                        skip_count = 0
                         valid_response = True
                     else:
                         print(f"Sorry {player.name}, that is not a valid play.")

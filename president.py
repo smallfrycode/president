@@ -3,6 +3,7 @@
 import sys
 from argparse import ArgumentParser
 from random import choice
+import re
 
 
 SUITS = ["Hearts", "Diamonds", "Spades", "Clubs"]
@@ -115,8 +116,6 @@ class HumanPlayer(Player):
         - The chosen card or None if the player decides not to play.
         """
         print(state)
-        last_played = state.last_played
-        last_play_size = len(last_played) if last_played else 1  # Minimum set size
         
         # Ask player for input
         choice = input("Enter the card values you want to play followed by first letter of suit (e.g., 'JH, JD, JS') or type 'pass' to pass: ").strip().upper()
@@ -124,22 +123,32 @@ class HumanPlayer(Player):
         if choice == "PASS":
             return None
         
-        def convert(letter):
-            for suit in SUITS:
-                if suit[0] == letter:
-                    return suit
-            raise IndexError
+        def convert(value):
+            regEx = r"""(?x)
+                ^
+                (?P<rank>\d+|J|Q|K|A)
+                (?P<suit>D|S|H|C)$
+            """
+            match = re.search(regEx, value)
+            if match:
+                for suit in SUITS:
+                    if suit[0] == match.group("suit"):
+                        return Card(match.group("rank"), suit)
+            raise ValueError
         
-        selected = [Card(card[0], convert(card[-1])) for card in choice.split(", ")]
-        valid_cards = 0
-        for card in selected:
-            for hand_card in self.hand:
-                if card == hand_card:
-                    valid_cards += 1
-        if valid_cards == len(selected):
-            return selected
-        # Automatically skip if no playable sets
-        return None
+        try:
+            selected = [convert(card) for card in choice.split(", ")]
+            valid_cards = 0
+            for card in selected:
+                for hand_card in self.hand:
+                    if card == hand_card:
+                        valid_cards += 1
+            if valid_cards == len(selected):
+                return selected
+            # attempt again if player did not put in cards they have in hand
+            return self.turn(state)
+        except ValueError:
+            return self.turn(state)
         
 class ComputerPlayer(Player):
     """Represents a computer player in the card game.
@@ -324,6 +333,10 @@ class Game:
             index = index + 1 if index < max_index else 0
             player.hand.append(self.deck.pop())
             
+        # organize player's cards
+        for player in self.players:
+            player.hand = sorted(player.hand, key=lambda card: CARD_VALUES.index(card.rank))
+            
     def create_roles(self):
         """Creates the possible roles players can win.
         
@@ -345,7 +358,7 @@ class Game:
             A boolean value
         """
         for card in last_play:
-            if card.rank == "2" or card.rank == "8":
+            if card.rank == "2":
                 return True
         return False
     
@@ -367,16 +380,17 @@ class Game:
             - Changes attributes of the Game Class, GameState Class, and Player Class
             - Prints results of the game as well as the game state
         """
+        # order players by roles if not the first game
+        if not first_game:
+            self.players = sorted(self.out, key=lambda player: ROLES.index(player.role))
+            self.out = []
+            
         # shuffle and deal cards
         self.shuffle()
         self.deal()
         
         # set up possible roles players can win (changes depending on amount of players)
         self.create_roles()
-        
-        # order players by roles if not the first game
-        if not first_game:
-            self.players = sorted(self.players, key=lambda player: ROLES.index(player.role))
             
         # begin actual game
         skip_count = 0
@@ -390,15 +404,23 @@ class Game:
                 while not valid_response:
                     # response must be a set of card objects
                     response = player.turn(self.state())
-                    print(skip_count)
-                    if response is None:
+                    print(skip_count, response)
+                    if skip_count >= len(self.players):
+                        skip_count = 0
+                        self.last_played = None
+                        valid_response = True
+                    elif response is None:
                         valid_response = True
                         skip_count += 1
                         print(f"{player.name} has skipped their turn.")
-                    elif response[0].rank == CARD_VALUES[-1] or skip_count >= len(self.players):
-                        valid_response = True
+                    elif response[0].rank == CARD_VALUES[-1]:
                         skip_count = 0
                         self.last_played = None
+                        for card in response:
+                            player.hand.remove(card)
+                        if player.hand: # player goes again if they don't have an empty hand
+                            continue
+                        valid_response = True
                     elif response[0].validate(last_played=self.last_played, play=response):
                         self.last_played = response
                         for card in response:

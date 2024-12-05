@@ -31,20 +31,27 @@ class Card:
 
         self.rank = rank
         self.suit = suit
-
-    def __str__(self):
-        return f"{self.rank} of {self.suit}"
-
-    def __lt__(self, other):
-        return CARD_VALUES.index(self.rank) < CARD_VALUES.index(other.rank)
     
     def __gt__(self, other):
+        """Compares card objects and check to see if self > other.
+        
+        Args:
+            other (Card): the card object we want to compare
+            
+        Returns:
+            a boolean value based on if self > other
+        """
         return CARD_VALUES.index(self.rank) > CARD_VALUES.index(other.rank)
-
-    def __ge__(self, other):
-        return CARD_VALUES.index(self.rank) >= CARD_VALUES.index(other.rank)
     
     def __eq__(self, other):
+        """Compares card objects and checks if they are the same.
+        
+        Args:
+            other (Card): the card object we want to compare
+            
+        Returns:
+            a boolean value based on if the 2 card objects are the same.
+        """
         return self.rank == other.rank and self.suit == other.suit
 
     def validate(self, play, last_played):
@@ -80,6 +87,12 @@ class Player:
         hand (list): player's cards
     """
     def __init__(self, name, hand):
+        """Initializes a player.
+        
+        Args:
+            name (str): the name of the player
+            hand (list): the player's hand
+        """
         self.name = name
         self.hand = hand
         self.role = None
@@ -273,6 +286,11 @@ class GameState:
         return f"\n{players_rep} \nTable: {table_rep} \n{self.current_player.name}'s Hand: {hand_rep}"
     
     def results(self):
+        """Returns the results of the Game.
+        
+        Returns:
+            a string containing all result data of the Game
+        """
         roles = ""
         for player in self.out:
             roles += f"{player.name}: {player.role}\n"
@@ -495,6 +513,14 @@ def main(players, computers):
             break
         
 def parse_args(arglist):
+    """Parses arguments in the terminal.
+    
+    Args:
+        arglist (list): arguments
+    
+    Returns:
+        a namespace of human players and amount of computers
+    """
     parser = ArgumentParser(description="President card game.")
     parser.add_argument('players', nargs='+', help='List of human player names')
     parser.add_argument('computers', type=int, help='Number of computer players', default=0)

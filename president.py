@@ -451,7 +451,7 @@ class Game:
         last_player = self.players.pop()
         last_player.role = self.roles_left.pop()
         self.out.append(last_player)
-        print(f"\nPresident has concluded, here are the results:\n {self.state().results()}")
+        print(f"\nPresident has concluded, here are the results:\n{self.state().results()}")
 
 def main(players, computers):
     """

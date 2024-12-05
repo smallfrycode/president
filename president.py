@@ -7,7 +7,7 @@ import re
 
 
 SUITS = ["Hearts", "Diamonds", "Spades", "Clubs"]
-ROLES = ["President", "Vice President", "Neutral", "Vice Trash", "Trash"]
+ROLES = ["President", "Vice President", "Neutral 1", "Neutral 2", "Neutral 3", "Vice Trash", "Trash"]
 CARD_VALUES = ["3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A", "2"]
 
 
@@ -349,7 +349,9 @@ class Game:
             2: ["President", "Trash"],
             3: ["President", "Neutral", "Trash"],
             4: ["President", "Vice President", "Vice Trash", "Trash"],
-            5: ROLES.copy()
+            5: ["President", "Vice President", "Neutral 1", "Vice Trash", "Trash"],
+            6: ["President", "Vice President", "Neutral 1", "Neutral 2", "Vice Trash", "Trash"],
+            7: ROLES.copy()
         }[player_count]
         
     def last_card_bomb(self, last_play):

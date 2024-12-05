@@ -295,16 +295,12 @@ class Game:
         Args:
             players (list): a list of all player objects
         """
+        self.deck = []
         self.players = players
         self.roles_left = ROLES.copy()
         self.out = []
         self.current_player = None
-        self.last_played = None
-        
-        self.deck = []
-        for value in CARD_VALUES:
-            for suit in SUITS:
-                self.deck.append(Card(value, suit))
+        self.last_played = None    
         
     def shuffle(self):
         """Shuffles all the cards in the deck.
@@ -312,12 +308,17 @@ class Game:
         Side effects:
             Changes the deck attribute of Game
         """
-        shuffled_deck = []
-        while self.deck:
-            chosen_card = choice(self.deck)
-            shuffled_deck.append(chosen_card)
-            self.deck.remove(chosen_card)
-        self.deck = shuffled_deck
+        # add cards to deck
+        unshuffled_deck = []
+        for value in CARD_VALUES:
+            for suit in SUITS:
+                unshuffled_deck.append(Card(value, suit))
+        
+        # shuffle the deck
+        while unshuffled_deck:
+            chosen_card = choice(unshuffled_deck)
+            self.deck.append(chosen_card)
+            unshuffled_deck.remove(chosen_card)
         
     def deal(self):
         """Deals all the cards from deck to players.
@@ -384,6 +385,7 @@ class Game:
         if not first_game:
             self.players = sorted(self.out, key=lambda player: ROLES.index(player.role))
             self.out = []
+            self.last_played = None
             
         # shuffle and deal cards
         self.shuffle()
@@ -394,54 +396,57 @@ class Game:
             
         # begin actual game
         skip_count = 0
+        turn = 0
         while len(self.players) > 1:
             # start the game
-            for player in self.players:
-                self.current_player = player
-                # continue until valid response
-                valid_response = False
-                response = None
-                while not valid_response:
-                    # response must be a set of card objects
-                    response = player.turn(self.state())
-                    print(skip_count, response)
-                    if skip_count >= len(self.players):
-                        skip_count = 0
-                        self.last_played = None
-                        valid_response = True
-                    elif response is None:
-                        valid_response = True
-                        skip_count += 1
-                        print(f"{player.name} has skipped their turn.")
-                    elif response[0].rank == CARD_VALUES[-1]:
-                        skip_count = 0
-                        self.last_played = None
-                        for card in response:
-                            player.hand.remove(card)
-                        if player.hand: # player goes again if they don't have an empty hand
-                            continue
-                        valid_response = True
-                    elif response[0].validate(last_played=self.last_played, play=response):
-                        self.last_played = response
-                        for card in response:
-                            player.hand.remove(card)
-                        skip_count = 0
-                        valid_response = True
-                    else:
-                        print(f"Sorry {player.name}, that is not a valid play.")
-                # add player to out list and give them proper role
-                if not player.hand:
-                    if response and self.last_card_bomb(response):
-                        player.role = self.roles_left.pop()
-                    else:
-                        player.role = self.roles_left.pop(0)
-                    self.out.append(player)
-                    print(f"{player.name} has emptied their hand and became {player.role}")
-                # stop the game when one player is left
-                if len(self.players) <= 1:
+            player = self.players[turn % len(self.players)]
+            self.current_player = player
+            # continue until valid response
+            valid_response = False
+            response = None
+            while not valid_response:
+                # response must be a set of card objects
+                response = player.turn(self.state())
+                if skip_count >= len(self.players):
+                    skip_count = 0
+                    self.last_played = None
+                    turn += (len(self.players) - 2)
                     break
-            # remove players who are out
-            self.players = [player for player in self.players if not player in self.out]
+                elif response is None:
+                    valid_response = True
+                    skip_count += 1
+                    print(f"{player.name} has skipped their turn.")
+                elif response[0].rank == CARD_VALUES[-1]:
+                    skip_count = 0
+                    self.last_played = None
+                    for card in response:
+                        player.hand.remove(card)
+                    if player.hand: # player goes again if they don't have an empty hand
+                        continue
+                    valid_response = True
+                elif response[0].validate(last_played=self.last_played, play=response):
+                    self.last_played = response
+                    for card in response:
+                        player.hand.remove(card)
+                    skip_count = 0
+                    valid_response = True
+                else:
+                    print(f"Sorry {player.name}, that is not a valid play.")
+            # add player to out list and give them proper role
+            if not player.hand:
+                if response and self.last_card_bomb(response):
+                    player.role = self.roles_left.pop()
+                else:
+                    player.role = self.roles_left.pop(0)
+                self.out.append(player)
+                self.players.remove(player)
+                print(f"{player.name} has emptied their hand and became {player.role}")
+            # stop the game when one player is left
+            if len(self.players) <= 1:
+                break
+            
+            # iterate through list of players
+            turn += 1
         
         last_player = self.players.pop()
         last_player.role = self.roles_left.pop()

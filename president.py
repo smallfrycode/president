@@ -387,8 +387,6 @@ class Game:
         """
         player_count = len(self.players)
         self.roles_left = {
-            2: ["President", "Trash"],
-            3: ["President", "Neutral 1", "Trash"],
             4: ["President", "Vice President", "Vice Trash", "Trash"],
             5: ["President", "Vice President", "Neutral 1", "Vice Trash", "Trash"],
             6: ["President", "Vice President", "Neutral 1", "Neutral 2", "Vice Trash", "Trash"],
@@ -510,6 +508,7 @@ def main(players, computers):
     """
     
     max_players = len(ROLES)
+    min_players = max_players - 3
     total_requested_players = len(players) + computers
 
     # Adjust player count if exceeding maximum
@@ -519,6 +518,8 @@ def main(players, computers):
             computers = 0
         else:
             computers = max_players - len(players)
+    elif total_requested_players < min_players:
+        computers = min_players - len(players)
 
     total_players = []
 

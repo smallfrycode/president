@@ -10,6 +10,13 @@ A card game played with a standard deck of 52 cards.
 
 ### Player Class
 --Player Class info goes here (talk about HumanPlayer and ComputerPlayer child classes under this)--
+The goal of the HumanPlayer class is to represents a human-controlled player in the card game, inheriting from the Player class. 
+It allows the user to make decisions about which cards to play or to pass their turn, validating their inputs against the game state and their hand. 
+It uses method, turn, prompts the player to select cards to play or pass their turn. 
+Input is validated through a helper function that parses card strings into Card objects using regular expressions, ensuring ranks and suits are valid and that the selected cards are in the player’s hand. 
+If the input is invalid or mismatched, the player is re-prompted until valid input is provided. 
+The method returns the chosen cards as a list or None if the player passes.
+
 
 ### GameState Class
 --GameState Class info goes here--
@@ -72,7 +79,9 @@ If a 2 was the last card played, then the lowest role available will be given, o
 Once the game has concluded, the last player will be removed from the `Game.players` list, added to the `Game.out` list, given the last role available, and the `GameState.results()` method will be called in order to retrieve and display the results of the game.
 
 ### main(players, computers)
---main() function info goes here--
+This function sets up and starts the card game, managing both human and computer players while ensuring the total player count does not exceed the maximum defined by ROLES. 
+It takes the list of human player names (players) and the number of computer players (computers), adjusting the counts if needed. The game runs in a loop, starting with game.play() and tracking whether it's the first game round. 
+After each round, the user is prompted to play again, with the loop continuing until the user opts out.
 
 ### parse_args(arglist)
 --parse_args() function info goes here--

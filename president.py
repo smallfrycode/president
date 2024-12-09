@@ -207,7 +207,7 @@ class ComputerPlayer(Player):
         last_played = state.last_played
         last_play_size = len(last_played) if last_played else 1
 
-        def valid_num(card_rank):
+        def valid(card_rank):
             """Finds a valid list of cards of the same rank to play, validated by the Card class.
             
             Args:
@@ -226,7 +226,7 @@ class ComputerPlayer(Player):
 
         # Find all valid card lists without creating duplicates
         playable_options = [
-            valid_play for value in CARD_VALUES if (valid_play := valid_num(value))
+            valid_play for value in CARD_VALUES if (valid_play := valid(value))
         ]
 
         if playable_options:

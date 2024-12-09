@@ -7,11 +7,11 @@ A program which can play the card game President
 ## Overview of Code
 ### Card Class
 The goal of the CardClass is to initialize the card suit and ranks for the card game.
--initializes the numerical value of the cards
--compares the numerical value of the player's card(s) to the card(s) previously placed
--compares the number of card(s) the player wants to play to the number of card(s) previously placed
--validates the players play by making sure their number of cards equals the number of cards previously placed while also ensuring all of the cards are greater than the cards previously placed
--also validates that all the player's cards are of the same rank (or suit in some cases) in the case that multiple cards are placed
+- initializes the numerical value of the cards
+- compares the numerical value of the player's card(s) to the card(s) previously placed
+- compares the number of card(s) the player wants to play to the number of card(s) previously placed
+- validates the players play by making sure their number of cards equals the number of cards previously placed while also ensuring all of the cards are greater than the cards previously placed
+- also validates that all the player's cards are of the same rank (or suit in some cases) in the case that multiple cards are placed
 
 ### Player Class
 The goal of the HumanPlayer class is to represents a human-controlled player in the card game, inheriting from the Player class. 

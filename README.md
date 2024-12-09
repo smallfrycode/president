@@ -110,7 +110,6 @@ Contributors of this project:
 ### Contribution Details
 | Method/Function | Primary Author | Techniques Demonstrated |
 | --------------- | -------------- | ----------------------- |
-|     GameState.__init()__      |      kayetubal      |          below          |
 |    GameState.__str()___       |    kayetubal    |    Magic method, f-string containing expressions    |
 |    find_unicode()    | kayetubal    |    conditional expression    |
 

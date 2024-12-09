@@ -2,14 +2,18 @@
 A card game played with a standard deck of 52 cards.
 
 ## Description
---description goes here--
+A program which can play the card game President
 
 ## Overview of Code
 ### Card Class
---Card Class info goes here--
+The goal of the CardClass is to initialize the card suit and ranks for the card game.
+-initializes the numerical value of the cards
+-compares the numerical value of the player's card(s) to the card(s) previously placed
+-compares the number of card(s) the player wants to play to the number of card(s) previously placed
+-validates the players play by making sure their number of cards equals the number of cards previously placed while also ensuring all of the cards are greater than the cards previously placed
+-also validates that all the player's cards are of the same rank (or suit in some cases) in the case that multiple cards are placed
 
 ### Player Class
---Player Class info goes here (talk about HumanPlayer and ComputerPlayer child classes under this)--
 The goal of the HumanPlayer class is to represents a human-controlled player in the card game, inheriting from the Player class. 
 It allows the user to make decisions about which cards to play or to pass their turn, validating their inputs against the game state and their hand. 
 It uses method, turn, prompts the player to select cards to play or pass their turn. 
@@ -110,9 +114,9 @@ Contributors of this project:
 ### Contribution Details
 | Method/Function | Primary Author | Techniques Demonstrated |
 | --------------- | -------------- | ----------------------- |
-|    GameState.__str()___       |    kayetubal    |    Magic method, f-string containing expressions    |
+| GameState.__str()___       |    kayetubal    |    Magic method, f-string containing expressions    |
 |    find_unicode()    | kayetubal    |    conditional expression    |
-
+| CardClass       | Ireland2004    |  Magic methods           |
 ## License
 This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the LICENSE file for details.
 

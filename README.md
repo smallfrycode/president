@@ -19,7 +19,20 @@ The method returns the chosen cards as a list or None if the player passes.
 
 
 ### GameState Class
---GameState Class info goes here--
+Provides information on the current state of the game.
+
+#### GameState.__init__(players, last_played, current_player)
+The goal of this method is to initialize the GameState class and create the necessary attributes to represent the state of the game visually.
+- players (list): a collection of all the players as a list
+- last_played (set): the last card(s) which were played as a set
+- current_player (Player): the person who is currently playing
+- out (list): all the players who have emptied their hand
+
+#### GameState.__str__()
+The goal of this method is the show an informal representation of the state of the game. It will create a string representing the players of the game with their corresponding roles. Then it will create a string representing the last card(s) that were played on the table. Then it will create a string representing the hand of the current player. Lastly, it will return a string representing all of this information (players and corresponding roles, last hand played, and current player's hand).
+
+#### GameState.results()
+The goal of this method is to return the results of the game in a string that shows each persons name and their corresponding role. 
 
 ### Game Class
 The skeleton of the program, sets up the game environment and controls the game.

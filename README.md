@@ -111,7 +111,8 @@ Contributors of this project:
 | Method/Function | Primary Author | Techniques Demonstrated |
 | --------------- | -------------- | ----------------------- |
 |     GameState.__init()__      |      kayetubal      |          below          |
-|    GameState.__str()___       |    kayetubal    |    Magic method    |
+|    GameState.__str()___       |    kayetubal    |    Magic method, f-string containing expressions    |
+|    find_unicode()    | kayetubal    |    conditional expression    |
 
 ## License
 This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the LICENSE file for details.

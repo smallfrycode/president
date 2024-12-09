@@ -1,30 +1,71 @@
 # President
 A card game played with a standard deck of 52 cards.
 
+
+
 ## Description
 A program which can play the card game President
 
+
+
 ## Overview of Code
 ### Card Class
-The goal of the CardClass is to initialize the card suit and ranks for the card game.
-- initializes the numerical value of the cards
-- compares the numerical value of the player's card(s) to the card(s) previously placed
-- compares the number of card(s) the player wants to play to the number of card(s) previously placed
-- validates the players play by making sure their number of cards equals the number of cards previously placed while also ensuring all of the cards are greater than the cards previously placed
-- also validates that all the player's cards are of the same rank (or suit in some cases) in the case that multiple cards are placed
+The goal of this class is to represent a playing card.
+#### Card.__init__(rank, suit)
+The goal of this method is to initialize a card object with a suit and rank.
+- rank (str): the rank of the card
+- suit (str): the card's suit
+
+#### Card.__gt__(other)
+The goal of this method is to compare the ranks of two cards and see if self > other (typically the player's card(s) and the card(s) last played). It will return True if self > other and False otherwise.
+- other (Card): the card object you are comparing with
+
+#### Card.__eq__(other)
+The goal of this method is to compare the ranks and suits of two cards and see if they are the same (typically the player's card(s) and the card(s) last played). It will return True if self == other and False otherwise.
+- other (Card): the card object you are comparing with
+
+#### Card.validate(play, last_played)
+The goal of this method is to compare a play trying to be made with the last play which was made. To validate a play it does the following:
+- compares the number of card(s) the player wants to play to the number of card(s) previously placed (must be same)
+- checks the ranks of each card in a player's play and compares it with the cards previously placed (must be >)
+- checks if all player's cards are of the same rank in the case that multiple cards are placed
+If all requirements above are met then it will return True, otherwise False.
+
 
 ### Player Class
-The goal of the HumanPlayer class is to represents a human-controlled player in the card game, inheriting from the Player class. 
-It allows the user to make decisions about which cards to play or to pass their turn, validating their inputs against the game state and their hand. 
-It uses method, turn, prompts the player to select cards to play or pass their turn. 
-Input is validated through a helper function that parses card strings into Card objects using regular expressions, ensuring ranks and suits are valid and that the selected cards are in the player’s hand. 
-If the input is invalid or mismatched, the player is re-prompted until valid input is provided. 
-The method returns the chosen cards as a list or None if the player passes.
+The goal of this class is to represent the player.
+##### Player.__init__(name, hand)
+The goal of this method is to initialize a player object.
+- name (str): the player's name
+- hand (list): all of the cards the player has
+
+##### Player.turn(state)
+This returns a NotImplementedError because this method isn't implemented unless a HumanPlayer or ComputerPlayer is created.
+
+#### HumanPlayer(Player)
+The goal of the HumanPlayer class is to represents a human-controlled player, inheriting from the Player class.
+##### HumanPlayer.__init__(name, hand)
+The goal of this method is to initialize a human player [see Player initialization](#playerinitname-hand).
+
+##### HumanPlayer.turn(state)
+This method allows the user to make decisions about which cards to play or to pass their turn. Input is validated through a helper function (`convert()`) that parses card strings into Card objects using regular expressions, ensuring ranks and suits are valid and that the selected cards are in the player’s hand. If the input is invalid or mismatched, the player is re-prompted until a valid input is provided. Once a valid input is given, the method returns `None` if the player passes or a list of their chosen cards.
+
+#### ComputerPlayer(Player)
+The goal of the ComputerPlayer class is to represent a computer-controlled player, inheriting from the Player class.
+##### ComputerPlayer.__init__(name, hand)
+The goal of this method is to initialize a computer player [see Player initialization](#playerinitname-hand).
+
+##### ComputerPlayer.turn(state)
+This method allows the computer to make decisions about which cards to play or to pass their turn. Based on what is currently on the table, it will search for the cards of the lowest rank and play them first. In order to help determine which cards it can play, it uses a helper function (`valid()`) which uses a list comprehension to create pairs of every card it has. If the pair size is greater than what was last played, then it slices off what isn't needed. A play will be returned if the computer finds one, otherwise it will return `None` to pass.
+```
+group = [c for c in self.hand if c.rank == card_rank] # card_rank is based on what value is provided when iterating through the CARD_VALUES constant list (provides all card ranks)
+if len(group) >= last_play_size:
+    play = group[:last_play_size] # slice off what isn't needed
+```
 
 
 ### GameState Class
 Provides information on the current state of the game.
-
 #### GameState.__init__(players, last_played, current_player)
 The goal of this method is to initialize the GameState class and create the necessary attributes to represent the state of the game visually.
 - players (list): a collection of all the players as a list
@@ -33,14 +74,14 @@ The goal of this method is to initialize the GameState class and create the nece
 - out (list): all the players who have emptied their hand
 
 #### GameState.__str__()
-The goal of this method is the show an informal representation of the state of the game. It will create a string representing the players of the game with their corresponding roles. Then it will create a string representing the last card(s) that were played on the table. Then it will create a string representing the hand of the current player. Lastly, it will return a string representing all of this information (players and corresponding roles, last hand played, and current player's hand).
+The goal of this method is the show an informal representation of the state of the game. It will create a string representing the players of the game with their corresponding roles. Then it will create a string representing the last card(s) that were played on the table. Then it will create a string representing the hand of the current player. A helper function is used to help grab the unicode for card suits (`find_unicode()`). Lastly, it will return a string representing all of this information (players and corresponding roles, last hand played, and current player's hand).
 
 #### GameState.results()
 The goal of this method is to return the results of the game in a string that shows each persons name and their corresponding role. 
 
+
 ### Game Class
 The skeleton of the program, sets up the game environment and controls the game.
-
 #### Game.__init__(players)
 The goal of this method is to create the necessary attributes in order for the game to function.
 - deck (list): a collection of all the cards in the deck
@@ -95,13 +136,19 @@ If a 2 was the last card played, then the lowest role available will be given, o
 
 Once the game has concluded, the last player will be removed from the `Game.players` list, added to the `Game.out` list, given the last role available, and the `GameState.results()` method will be called in order to retrieve and display the results of the game.
 
+
 ### main(players, computers)
-This function sets up and starts the card game, managing both human and computer players while ensuring the total player count does not exceed the maximum defined by ROLES. 
-It takes the list of human player names (players) and the number of computer players (computers), adjusting the counts if needed. The game runs in a loop, starting with game.play() and tracking whether it's the first game round. 
-After each round, the user is prompted to play again, with the loop continuing until the user opts out.
+This function sets up and starts the card game, managing both human and computer players while ensuring the total player count is between 4-7 players.
+
+It takes the list of human player names (`players`) and the number of computer players (`computers`), adjusting the counts if needed. The game runs in a loop, calling `Game.play()` and tracking whether a game was previously played. After each round, the user is prompted to play again, with the loop continuing until the user opts out.
+
 
 ### parse_args(arglist)
---parse_args() function info goes here--
+The goal of this function is to parse command line arguments.
+
+It utilizes the `ArgumentParser()` class (from the `argparse` module) and adds 2 arguments, `players` as well as `--computers` with the `add_argument()` method. The `players` argument is the list of player names [human players](#humanplayerplayer) whereas the `--computers` argument keeps track of how many computer players should be added [see ComputerPlayer class](#computerplayerplayer). While you must add at least 1 human player, adding computers is optional and can be added by using the `-c` flag followed by the number of computers you want to add as an integer. This function returns a namespace by using the `parse_args(arglist)` method. The parameter `arglist` is created by using `sys.argv[]` to grab the command line arguments.
+
+
 
 ## Authors
 Contributors of this project:
@@ -111,18 +158,40 @@ Contributors of this project:
 - Ireland2004
 - andychen47 (some commits were made by his other account: Iamold21)
 
+
+
 ### Contribution Details
-| Method/Function | Primary Author | Techniques Demonstrated |
-| --------------- | -------------- | ----------------------- |
-| GameState.__str()___       |    kayetubal    |    f-string containing expressions    |
-|    find_unicode()    | kayetubal    |    conditional expression    |
-| __eq__()     | Ireland2004    |  Magic method               |
-| validate()    | Ireland2004    | Generator expressions    |
+| Method/Function      | Primary Author | Techniques Demonstrated                  |
+| ---------------      | -------------- | -----------------------                  |
+| GameState.\__str()__ | kayetubal      | f-string containing expressions          |
+| find_unicode()       | kayetubal      | conditional expression                   |
+| Card.\__eq__()       | Ireland2004    | Magic method                             |
+| validate()           | Ireland2004    | optional parameters                      |
+| Game.deal()          | smallfrycode   | use of a key function (sorted(); lambda) |
+| convert()            | smallfrycode   | regular expressions                      |
+| parse_args()         | andychen47     | ArgumentParser() class                   |
+
+
+
 ## License
 This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the LICENSE file for details.
 
+
+
 ## Acknowledgements
-- python random module [see Game.shuffle() method](#gameshuffle)
-- python arparse module
+- python random module
+    - [see Game.shuffle() method](#gameshuffle)
+    - https://docs.python.org/3/library/random.html
+    - Author: Python
+- python argparse module
+    - [see parse_args function](#parse_argsarglist)
+    - https://docs.python.org/3/library/argparse.html
+    - Author: Python
 - python sys module
+    - [see parse_args function](#parse_argsarglist)
+    - https://docs.python.org/3/library/sys.html
+    - Author: Python
 - python re module
+    - [see HumanPlayer.turn() method](#humanplayerturnstate)
+    - https://docs.python.org/3/library/re.html
+    - Author: Python

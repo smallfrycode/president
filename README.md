@@ -114,9 +114,10 @@ Contributors of this project:
 ### Contribution Details
 | Method/Function | Primary Author | Techniques Demonstrated |
 | --------------- | -------------- | ----------------------- |
-| GameState.__str()___       |    kayetubal    |    Magic method, f-string containing expressions    |
+| GameState.__str()___       |    kayetubal    |    f-string containing expressions    |
 |    find_unicode()    | kayetubal    |    conditional expression    |
-| CardClass       | Ireland2004    |  Magic methods           |
+| __eq__()     | Ireland2004    |  Magic method               |
+| validate()    | Ireland2004    | Generator expressions    |
 ## License
 This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the LICENSE file for details.
 

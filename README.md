@@ -110,7 +110,8 @@ Contributors of this project:
 ### Contribution Details
 | Method/Function | Primary Author | Techniques Demonstrated |
 | --------------- | -------------- | ----------------------- |
-|     insert      |      rows      |          below          |
+|     GameState.__init()__      |      kayetubal      |          below          |
+|    GameState.__str()___       |    kayetubal    |    Magic method    |
 
 ## License
 This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the LICENSE file for details.

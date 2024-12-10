@@ -173,33 +173,33 @@ Contributors of this project:
 
 
 ### Contribution Details
-| Method/Function                     | Primary Author | Techniques Demonstrated                  |
-| ---------------                     | -------------- | -----------------------                  |
-| `Card.__init__()`                   | Ireland2004    | N/A                                      |
-| `Card.__gt__()`                     | Ireland2004    | Magic methods                            |
-| `Card.__eq__()`                     | smallfrycode   | N/A                                      |
-| `Card.validate()`                   | Ireland2004    | Optional parameters                      |
-| `Player.__init__()`                 | smallfrycode   | N/A                                      |
-| `Player.turn()`                     | smallfrycode   | N/A                                      |
-| `HumanPlayer(Player).__init__()`    | andychen47     | N/A                                      |
-| `HumanPlayer(Player).turn()`        | andychen47     | List comprehension                       |
-| `convert()` (helper function)       | smallfrycode   | Regular expressions                      |
-| `ComputerPlayer(Player).__init__()` | duckwookwon    | super()                                  |
-| `ComputerPlayer(Player).turn()`     | duckwookwon    | Use of a key function (sorted(); lambda) |
-| `valid()` (helper function)         | duckwookwon    | N/A                                      |
-| `GameState.__init__()`              | kayetubal      | N/A                                      |
-| `GameState.__str()__`               | kayetubal      | f-string containing expressions          |
-| `find_unicode()` (helper function)  | kayetubal      | Conditional expression                   |
-| `GameState.results()`               | smallfrycode   | N/A                                      |
-| `Game.__init__()`                   | smallfrycode   | N/A                                      |
-| `Game.shuffle()`                    | smallfrycode   | N/A                                      |
-| `Game.deal()`                       | smallfrycode   | N/A                                      |
-| `Game.create_roles()`               | smallfrycode   | N/A                                      |
-| `Game.last_card_bomb()`             | smallfrycode   | N/A                                      |
-| `Game.state()`                      | smallfrycode   | N/A                                      |
-| `Game.play()`                       | smallfrycode   | Composition of two custom classes        |
-| `main()`                            | andychen47     | N/A                                      |
-| `parse_args()`                      | andychen47     | ArgumentParser() class                   |
+| Method/Function                     | Primary Author | Techniques Demonstrated               |
+| ---------------                     | -------------- | -----------------------               |
+| `Card.__init__()`                   | Ireland2004    | N/A                                   |
+| `Card.__gt__()`                     | Ireland2004    | Magic methods                         |
+| `Card.__eq__()`                     | smallfrycode   | N/A                                   |
+| `Card.validate()`                   | Ireland2004    | Keyword Arguments                     |
+| `Player.__init__()`                 | smallfrycode   | N/A                                   |
+| `Player.turn()`                     | smallfrycode   | N/A                                   |
+| `HumanPlayer(Player).__init__()`    | andychen47     | N/A                                   |
+| `HumanPlayer(Player).turn()`        | andychen47     | List comprehension                    |
+| `convert()` (helper function)       | smallfrycode   | Regular expressions                   |
+| `ComputerPlayer(Player).__init__()` | duckwookwon    | super()                               |
+| `ComputerPlayer(Player).turn()`     | duckwookwon    | Use of a key function (min(); lambda) |
+| `valid()` (helper function)         | duckwookwon    | N/A                                   |
+| `GameState.__init__()`              | kayetubal      | N/A                                   |
+| `GameState.__str()__`               | kayetubal      | f-string containing expressions       |
+| `find_unicode()` (helper function)  | kayetubal      | Conditional expression                |
+| `GameState.results()`               | smallfrycode   | N/A                                   |
+| `Game.__init__()`                   | smallfrycode   | N/A                                   |
+| `Game.shuffle()`                    | smallfrycode   | N/A                                   |
+| `Game.deal()`                       | smallfrycode   | N/A                                   |
+| `Game.create_roles()`               | smallfrycode   | N/A                                   |
+| `Game.last_card_bomb()`             | smallfrycode   | N/A                                   |
+| `Game.state()`                      | smallfrycode   | N/A                                   |
+| `Game.play()`                       | smallfrycode   | Composition of two custom classes     |
+| `main()`                            | andychen47     | N/A                                   |
+| `parse_args()`                      | andychen47     | ArgumentParser() class                |
 
 
 

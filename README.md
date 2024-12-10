@@ -178,18 +178,18 @@ Contributors of this project:
 | `Card.__init__()`                   | Ireland2004    | N/A                                   |
 | `Card.__gt__()`                     | Ireland2004    | Magic methods                         |
 | `Card.__eq__()`                     | smallfrycode   | N/A                                   |
-| `Card.validate()`                   | Ireland2004    | Keyword Arguments                     |
+| `Card.validate()`                   | Ireland2004    | Generator expressions                 |
 | `Player.__init__()`                 | smallfrycode   | N/A                                   |
 | `Player.turn()`                     | smallfrycode   | N/A                                   |
-| `HumanPlayer(Player).__init__()`    | andychen47     | N/A                                   |
-| `HumanPlayer(Player).turn()`        | andychen47     | List comprehension                    |
+| `HumanPlayer(Player).__init__()`    | andychen47     | super()                               |
+| `HumanPlayer(Player).turn()`        | andychen47     | N/A                                   |
 | `convert()` (helper function)       | smallfrycode   | Regular expressions                   |
-| `ComputerPlayer(Player).__init__()` | duckwookwon    | super()                               |
+| `ComputerPlayer(Player).__init__()` | duckwookwon    | N/A                                   |
 | `ComputerPlayer(Player).turn()`     | duckwookwon    | Use of a key function (min(); lambda) |
-| `valid()` (helper function)         | duckwookwon    | N/A                                   |
+| `valid()` (helper function)         | duckwookwon    | List comprehensions                   |
 | `GameState.__init__()`              | kayetubal      | N/A                                   |
 | `GameState.__str()__`               | kayetubal      | f-string containing expressions       |
-| `find_unicode()` (helper function)  | kayetubal      | Conditional expression                |
+| `find_unicode()` (helper function)  | kayetubal      | Conditional expressions               |
 | `GameState.results()`               | smallfrycode   | N/A                                   |
 | `Game.__init__()`                   | smallfrycode   | N/A                                   |
 | `Game.shuffle()`                    | smallfrycode   | N/A                                   |

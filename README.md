@@ -8,6 +8,7 @@ A card game played with a standard deck of 52 cards.
 To set up the environment, type the following:
 
 Windows: `python president.py [names] -c [number]`
+
 Mac: `python3 president.py [names] -c [number]`
 
 In `[names]` you will write the names of each human player you wish to add, separated by a space. If you wish to add computers, you must use the `-c` flag and write the amount of computer players you wish to add as an integer in place of `[numbers]`. If you don't wish to have computer players, write `0` in `[numbers]` or don't include `-c [number]`.

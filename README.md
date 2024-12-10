@@ -3,24 +3,36 @@ A card game played with a standard deck of 52 cards.
 
 
 
-## Description
-A program which can play the card game President
+## Using The Program
+### Creating the Environment
+To set up the environment, type the following:
+Windows: `python president.py [names] -c [number]`
+Mac: `python3 president.py [names] -c [number]`
+
+In `[names]` you will write the names of each human player you wish to add, separated by a space. If you wish to add computers, you must use the `-c` flag and write the amount of computer players you wish to add as an integer in place of `[numbers]`. If you don't wish to have computer players, write `0` in `[numbers]` or don't include `-c [number]`.
+
+### Playing The Game
+Once the environment has been created, you will be prompted with your hand as well as other relevant information to the game. The game will tell you who's hand is being displayed and list you that player's cards in ascending order by rank. To play a card you must type the card's rank followed by the first letter of the suit capitalized (e.g `JS` or `5H`). To play pairs, you can separate these inputs with a ',' (e.g `JS, 5H`). If you can't or don't wish to play, type `pass` into the terminal to skip your turn.
+
+The `Table` is what was last played, if you see nothing in the table then you can play any of your cards. If there is a card/pair of cards on the table, you must play a card/pair of cards of a higher rank. The pair count of your play must be the same as what is on the table (i.e Table: `5H, 5S` - must play - `6D, 6H` - or higher rank). Suit doesn't matter.
+
+Once the game has concluded you will be shown a results screen with each player's earned roles as well as a play again prompt. To play again you must type `yes`, any other input will tell the program to close.
 
 
 
 ## Overview of Code
 ### Card Class
 The goal of this class is to represent a playing card.
-#### Card.__init__(rank, suit)
+#### Card.\_\_init__(rank, suit)
 The goal of this method is to initialize a card object with a suit and rank.
 - rank (str): the rank of the card
 - suit (str): the card's suit
 
-#### Card.__gt__(other)
+#### Card.\_\_gt__(other)
 The goal of this method is to compare the ranks of two cards and see if self > other (typically the player's card(s) and the card(s) last played). It will return True if self > other and False otherwise.
 - other (Card): the card object you are comparing with
 
-#### Card.__eq__(other)
+#### Card.\_\_eq__(other)
 The goal of this method is to compare the ranks and suits of two cards and see if they are the same (typically the player's card(s) and the card(s) last played). It will return True if self == other and False otherwise.
 - other (Card): the card object you are comparing with
 
@@ -34,7 +46,7 @@ If all requirements above are met then it will return True, otherwise False.
 
 ### Player Class
 The goal of this class is to represent the player.
-##### Player.__init__(name, hand)
+##### Player.\_\_init__(name, hand)
 The goal of this method is to initialize a player object.
 - name (str): the player's name
 - hand (list): all of the cards the player has
@@ -44,7 +56,7 @@ This returns a NotImplementedError because this method isn't implemented unless 
 
 #### HumanPlayer(Player)
 The goal of the HumanPlayer class is to represents a human-controlled player, inheriting from the Player class.
-##### HumanPlayer.__init__(name, hand)
+##### HumanPlayer.\_\_init__(name, hand)
 The goal of this method is to initialize a human player [see Player initialization](#playerinitname-hand).
 
 ##### HumanPlayer.turn(state)
@@ -52,7 +64,7 @@ This method allows the user to make decisions about which cards to play or to pa
 
 #### ComputerPlayer(Player)
 The goal of the ComputerPlayer class is to represent a computer-controlled player, inheriting from the Player class.
-##### ComputerPlayer.__init__(name, hand)
+##### ComputerPlayer.\_\_init__(name, hand)
 The goal of this method is to initialize a computer player [see Player initialization](#playerinitname-hand).
 
 ##### ComputerPlayer.turn(state)
@@ -73,7 +85,7 @@ The goal of this method is to initialize the GameState class and create the nece
 - current_player (Player): the person who is currently playing
 - out (list): all the players who have emptied their hand
 
-#### GameState.__str__()
+#### GameState.\_\_str__()
 The goal of this method is the show an informal representation of the state of the game. It will create a string representing the players of the game with their corresponding roles. Then it will create a string representing the last card(s) that were played on the table. Then it will create a string representing the hand of the current player. A helper function is used to help grab the unicode for card suits (`find_unicode()`). Lastly, it will return a string representing all of this information (players and corresponding roles, last hand played, and current player's hand).
 
 #### GameState.results()
@@ -82,7 +94,7 @@ The goal of this method is to return the results of the game in a string that sh
 
 ### Game Class
 The skeleton of the program, sets up the game environment and controls the game.
-#### Game.__init__(players)
+#### Game.\_\_init__(players)
 The goal of this method is to create the necessary attributes in order for the game to function.
 - deck (list): a collection of all the cards in the deck
 - players (list): a collection of all the players
@@ -161,15 +173,21 @@ Contributors of this project:
 
 
 ### Contribution Details
-| Method/Function      | Primary Author | Techniques Demonstrated                  |
-| ---------------      | -------------- | -----------------------                  |
-| GameState.\__str()__ | kayetubal      | f-string containing expressions          |
-| find_unicode()       | kayetubal      | conditional expression                   |
-| Card.\__eq__()       | Ireland2004    | Magic method                             |
-| validate()           | Ireland2004    | optional parameters                      |
-| Game.deal()          | smallfrycode   | use of a key function (sorted(); lambda) |
-| convert()            | smallfrycode   | regular expressions                      |
-| parse_args()         | andychen47     | ArgumentParser() class                   |
+| Method/Function                    | Primary Author | Techniques Demonstrated                  |
+| ---------------                    | -------------- | -----------------------                  |
+| `Card.__gt__()`                    | Ireland2004    | Magic method                             |
+| `Card.validate()`                  | Ireland2004    | optional parameters                      |
+| `HumanPlayer(Player).turn()`       | andychen47     | N/A                                      |
+| `convert()` (helper function)      | smallfrycode   | regular expressions                      |
+| `ComputerPlayer(Player).turn()`    | duckwookwon    | list comprehension                       |
+| `valid()` (helper function)        | duckwookwon    | N/A                                      |
+| `GameState.__str()__`              | kayetubal      | f-string containing expressions          |
+| `find_unicode()` (helper function) | kayetubal      | conditional expression                   |
+| `Game.shuffle()`                   | smallfrycode   | N/A                                      |
+| `Game.deal()`                      | smallfrycode   | use of a key function (sorted(); lambda) |
+| `Game.play()`                      | smallfrycode   | N/A                                      |
+| `main()`                           | andychen47     | N/A                                      |
+| `parse_args()`                     | andychen47     | ArgumentParser() class                   |
 
 
 
@@ -195,3 +213,7 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the LICENSE 
     - [see HumanPlayer.turn() method](#humanplayerturnstate)
     - https://docs.python.org/3/library/re.html
     - Author: Python
+- President Rules
+    - https://bicyclecards.com/how-to-play/presidents
+    - Author: BicycleCards
+    - some rules which aren't included above came from our variation (e.g 2's being bombs)

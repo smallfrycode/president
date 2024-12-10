@@ -6,6 +6,7 @@ A card game played with a standard deck of 52 cards.
 ## Using The Program
 ### Creating the Environment
 To set up the environment, type the following:
+
 Windows: `python president.py [names] -c [number]`
 Mac: `python3 president.py [names] -c [number]`
 

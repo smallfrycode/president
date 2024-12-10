@@ -19,7 +19,11 @@ class Card:
         suit (str): The suit of the card (e.g Spades, Hearts, Diamonds, Clubs).
     """
     def __init__(self, rank, suit):
-        """Initializes a card with a given rank and suit.
+        """
+        Primary Author: Ireland2004
+        Techniques Demonstrated: N/A
+        
+        Initializes a card with a given rank and suit.
         
         Raises:
             ValueError: If the suit or rank is invalid.
@@ -36,7 +40,11 @@ class Card:
         self.suit = suit
     
     def __gt__(self, other):
-        """Compares card objects and checks to see if self > other.
+        """
+        Primary Author: Ireland2004
+        Techniques Demonstrated: Magic methods
+        
+        Compares card objects and checks to see if self > other.
         
         Args:
             other (Card): the card object we want to compare.
@@ -47,7 +55,11 @@ class Card:
         return CARD_VALUES.index(self.rank) > CARD_VALUES.index(other.rank)
     
     def __eq__(self, other):
-        """Compares card objects and checks if they are the same.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Compares card objects and checks if they are the same.
         
         Args:
             other (Card): the card object we want to compare.
@@ -58,7 +70,11 @@ class Card:
         return self.rank == other.rank and self.suit == other.suit
 
     def validate(self, play, last_played):
-        """Validates a player's move in the card game.
+        """
+        Primary Author: Ireland2004
+        Techniques Demonstrated: Keyword Arguments
+        
+        Validates a player's move in the card game.
         
         Args:
             play (list of Cards): The cards the player chose to play.
@@ -90,7 +106,11 @@ class Player:
         role (str or None): player's role.
     """
     def __init__(self, name, hand):
-        """Initializes a player.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Initializes a player.
         
         Args:
             name (str): the name of the player.
@@ -104,7 +124,12 @@ class Player:
         self.role = None
         
     def turn(self):
-        """Returns a NotImplementedError because computer/player hasn't been established yet."""
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Returns a NotImplementedError because computer/player hasn't been established yet.
+        """
         return NotImplementedError
 
 class HumanPlayer(Player):
@@ -117,7 +142,11 @@ class HumanPlayer(Player):
     """
     
     def __init__(self, name, hand):
-        """Initializes a HumanPlayer instance.
+        """
+        Primary Author: andychen47
+        Techniques Demonstrated: N/A
+        
+        Initializes a HumanPlayer instance.
         
         Args:
         - name (str): The name of the player.
@@ -128,7 +157,11 @@ class HumanPlayer(Player):
         super().__init__(name, hand)
     
     def turn(self, state):
-        """Prompts the human player to select a card to play or skip their turn.
+        """
+        Primary Author: andychen47
+        Techniques Demonstrated: List comprehensions
+        
+        Prompts the human player to select a card to play or skip their turn.
         
         Args:
             state (GameState): Info about the current state of the game.
@@ -151,6 +184,21 @@ class HumanPlayer(Player):
             return None
         
         def convert(value):
+            """
+            Primary Author: smallfrycode
+            Techniques Demonstrated: Regular expressions
+            
+            converts a card typed from the terminal into a Card object.
+            
+            Args:
+                value (str): the user's input
+                
+            Returns:
+                a Card object.
+                
+            Raises:
+                a ValueError if no valid card found.
+            """
             regEx = r"""(?x)
                 ^
                 (?P<rank>\d+|J|Q|K|A)
@@ -185,7 +233,11 @@ class ComputerPlayer(Player):
         hand (list): The player's hand, where each item is a card object.
     """
     def __init__(self, name, hand):
-        """Initializes the computer player with a name and starting hand.
+        """
+        Primary Author: duckwookwon
+        Techniques Demonstrated: super()
+        
+        Initializes the computer player with a name and starting hand.
         
         Args:
             name (str): The player's name.
@@ -196,7 +248,11 @@ class ComputerPlayer(Player):
         super().__init__(name, hand)
 
     def turn(self, state):
-        """Chooses cards to play based on the last cards played.
+        """
+        Primary Author: duckwookwon
+        Techniques Demonstrated: use of a key function (min(); lambda)
+        
+        Chooses cards to play based on the last cards played.
         
         Args:
             state (GameState): Info about the current state of the game.
@@ -208,7 +264,11 @@ class ComputerPlayer(Player):
         last_play_size = len(last_played) if last_played else 1
 
         def valid(card_rank):
-            """Finds a valid list of cards of the same rank to play, validated by the Card class.
+            """
+            Primary Author: duckwookwon
+            Techniques Demonstrated: N/A
+            
+            Finds a valid list of cards of the same rank to play, validated by the Card class.
             
             Args:
                 card_rank (str): The rank of the card to use for forming a list.
@@ -247,7 +307,11 @@ class GameState:
     """
     
     def __init__(self, players, last_played, current_player, out):
-        """Initializes the GameState class.
+        """
+        Primary Author: kayetubal
+        Techniques Demonstrated: N/A
+        
+        Initializes the GameState class.
         
         Args:
             - players (list): A collection of all the players as a list
@@ -264,13 +328,21 @@ class GameState:
         self.out = out
         
     def __str__(self):
-        """Shows an informal representation of the GameState.
+        """
+        Primary Author: kayetubal
+        Techniques Demonstrated: f-string containing expressions
+        
+        Shows an informal representation of the GameState.
         
         Returns:
             str: a string showing the current state of the game.
         """
         def find_unicode(suit):
-            """Determines the unicode depending on the suit of the card.
+            """
+            Primary Author: kayetubal
+            Techniques Demonstrated: Conditional expressions
+            
+            Determines the unicode depending on the suit of the card.
             
             Args:
                 suit (str): The suit of the card.
@@ -306,7 +378,11 @@ class GameState:
         return f"\n{players_rep} \nTable: {table_rep} \n{self.current_player.name}'s Hand: {hand_rep}"
     
     def results(self):
-        """Returns the results of the game.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Returns the results of the game.
         
         Returns:
             str: a string containing all result data of the game.
@@ -328,7 +404,11 @@ class Game:
         - last_played (list or None): the last card(s) which were played
     """
     def __init__(self, players):
-        """Initializes the game.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Initializes the game.
         
         Args:
             players (list): a list of all player objects.
@@ -344,7 +424,11 @@ class Game:
         self.last_played = None    
         
     def shuffle(self):
-        """Shuffles all the cards in the deck.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Shuffles all the cards in the deck.
         
         Side effects:
             Changes the deck attribute of Game.
@@ -362,7 +446,11 @@ class Game:
             unshuffled_deck.remove(chosen_card)
         
     def deal(self):
-        """Deals all the cards from deck to players.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Deals all the cards from deck to players.
         
         Side effects:
             - Changes the deck attribute of Game
@@ -380,7 +468,11 @@ class Game:
             player.hand = sorted(player.hand, key=lambda card: CARD_VALUES.index(card.rank))
             
     def create_roles(self):
-        """Creates the possible roles players can win.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Creates the possible roles players can win.
         
         Side effects:
             Changes roles_left attribute of Game.
@@ -394,7 +486,11 @@ class Game:
         }[player_count]
         
     def last_card_bomb(self, last_play):
-        """Checks to see if a player last played a bomb card.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Checks to see if a player last played a bomb card.
         
         Returns:
             bool: True if last_play contains a Card object with the rank of 2, False otherwise.
@@ -405,7 +501,11 @@ class Game:
         return False
     
     def state(self):
-        """Grabs the state of the game.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: N/A
+        
+        Grabs the state of the game.
         
         Returns:
             a GameState object.
@@ -413,7 +513,11 @@ class Game:
         return GameState(self.players, self.last_played, self.current_player, self.out)
     
     def play(self, first_game):
-        """Starts and progresses through the game.
+        """
+        Primary Author: smallfrycode
+        Techniques Demonstrated: Composition of two custom classes
+        
+        Starts and progresses through the game.
         
         Args:
             first_game (bool): whether games have been previously played before while the program was running.
@@ -497,7 +601,11 @@ class Game:
         print(f"\nPresident has concluded, here are the results:\n{self.state().results()}")
 
 def main(players, computers):
-    """Sets up and starts the card game President with human and computer players (max players = len(ROLES)).
+    """
+    Primary Author: andychen47
+    Techniques Demonstrated: N/A
+    
+    Sets up and starts the card game President with human and computer players (max players = len(ROLES)).
     
     Args:
         players (list): list of human player names.
@@ -544,7 +652,11 @@ def main(players, computers):
             break
         
 def parse_args(arglist):
-    """Parses arguments in the terminal.
+    """
+    Primary Author: andychen47
+    Techniques Demonstrated: ArgumentParser() class
+    
+    Parses arguments in the terminal.
     
     Args:
         arglist (list): arguments from the terminal.

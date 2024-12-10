@@ -72,7 +72,7 @@ class Card:
     def validate(self, play, last_played):
         """
         Primary Author: Ireland2004
-        Techniques Demonstrated: Keyword Arguments
+        Techniques Demonstrated: Generator expressions
         
         Validates a player's move in the card game.
         
@@ -144,7 +144,7 @@ class HumanPlayer(Player):
     def __init__(self, name, hand):
         """
         Primary Author: andychen47
-        Techniques Demonstrated: N/A
+        Techniques Demonstrated: super()
         
         Initializes a HumanPlayer instance.
         
@@ -159,7 +159,7 @@ class HumanPlayer(Player):
     def turn(self, state):
         """
         Primary Author: andychen47
-        Techniques Demonstrated: List comprehensions
+        Techniques Demonstrated: N/A
         
         Prompts the human player to select a card to play or skip their turn.
         
@@ -235,7 +235,7 @@ class ComputerPlayer(Player):
     def __init__(self, name, hand):
         """
         Primary Author: duckwookwon
-        Techniques Demonstrated: super()
+        Techniques Demonstrated: N/A
         
         Initializes the computer player with a name and starting hand.
         
@@ -266,7 +266,7 @@ class ComputerPlayer(Player):
         def valid(card_rank):
             """
             Primary Author: duckwookwon
-            Techniques Demonstrated: N/A
+            Techniques Demonstrated: List comprehensions
             
             Finds a valid list of cards of the same rank to play, validated by the Card class.
             

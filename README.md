@@ -59,7 +59,7 @@ This returns a NotImplementedError because this method isn't implemented unless 
 #### HumanPlayer(Player)
 The goal of the HumanPlayer class is to represent a human-controlled player, inheriting from the Player class.
 ##### HumanPlayer.\_\_init__(name, hand)
-The goal of this method is to initialize a human player [see Player initialization](#playerinitname-hand).
+The goal of this method is to initialize a human player [see Player initialization](#player__init__name-hand).
 
 ##### HumanPlayer.turn(state)
 This method allows the user to make decisions about which cards to play or to pass their turn. Input is validated through a helper function (`convert()`) that parses card strings into `Card` objects using regular expressions, ensuring ranks and suits are valid and that the selected cards are in the player’s hand. If the input is invalid or mismatched, the player is re-prompted until a valid input is provided. Once a valid input is given, the method returns `None` if the player passes or a list of their chosen cards.
@@ -67,7 +67,7 @@ This method allows the user to make decisions about which cards to play or to pa
 #### ComputerPlayer(Player)
 The goal of the ComputerPlayer class is to represent a computer-controlled player, inheriting from the Player class.
 ##### ComputerPlayer.\_\_init__(name, hand)
-The goal of this method is to initialize a computer player [see Player initialization](#playerinitname-hand).
+The goal of this method is to initialize a computer player [see Player initialization](#player__init__name-hand).
 
 ##### ComputerPlayer.turn(state)
 This method allows the computer to make decisions about which cards to play or to pass their turn. Based on what is currently on the table, it will search for the cards of the lowest rank and play them first. In order to help determine which cards it can play, it uses a helper function (`valid()`) which uses a list comprehension to create pairs of every card it has. If the pair size is greater than what was last played, then it slices off what isn't needed. A play will be returned if the computer finds one, otherwise it will return `None` to pass.
